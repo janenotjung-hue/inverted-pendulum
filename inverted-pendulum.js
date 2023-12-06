@@ -7,7 +7,6 @@ function controller() {
     
     // don't even try if the angle is too far off upright
     if( Math.abs(theta) > 0.5 ) return 0;
-    
     // pid controller (i=0)
     return ( ptheta*theta + dtheta*thetadot + px*x + dx*xdot ) * controllerOn;
 }
@@ -421,14 +420,12 @@ function stateDot( state ) {
 }
 
  
-function updateCoordinates() {
-    
+function updateCoordinates() {    
     // increment time
     t += dt;
     
     // avoid division by 0
     if( l == 0 ) return;
-    
     // handle bounce off edge of rail
     const bounce = Math.abs(x) > 0.875 && xdot*x > 0;
     thetadot    += 2*xdot*( Math.cos(theta)**2 ) / ( l*Math.cos(theta) ) * bounce;
@@ -436,7 +433,7 @@ function updateCoordinates() {
     
     // get state vector
     const state = [theta, x, thetadot, xdot];
-    
+
     // calculate RK4 intermediate values
     const k1 = stateDot( state );
     const k2 = stateDot( add( state, mul( k1, dt/2 ) ) );
@@ -448,12 +445,23 @@ function updateCoordinates() {
     
     // update the vars
     [theta, x, thetadot, xdot] = add( state, RK4step );
-    
+    updateLog();
     // keep theta between -pi and pi
     if( theta >  pi ) theta -= 2*pi;
     if( theta < -pi ) theta += 2*pi;
 }
 
+const pendulumLog = [];
+
+function updateLog() {
+    pendulumLog.push({t, theta, thetadot, thetaddot, x, xdot, xddot, controllerOn }); //controllerOn will print as 1 if true
+}
+
+function printLog() {
+    //for(i=0;i<30; i++) {
+        //console.log(pendulumLog[i]);
+    //}
+}
 
 function updateGraphics() {
     
@@ -472,12 +480,11 @@ function updateGraphics() {
 
 
 function mainloop(millis, lastMillis) {
-
+    if(millis >= 5000) {console.log("done"); console.log(pendulumLog.length); printLog(); return};
 	dt = ( millis - lastMillis ) / 1000 / stepsPerFrame;
-    
+    //console.log(t, x, xdot, xddot, theta, thetadot, thetaddot);
     // do the physics step as many times as needed 
     for(var s=0; s<stepsPerFrame; ++s) updateCoordinates();
-    
     // update the graphics
     updateGraphics();
     
