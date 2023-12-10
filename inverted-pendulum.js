@@ -1,7 +1,5 @@
 // Oscar Saharoy 2021
 
-
-
 // rewrite me!!!!
 function controller() {
     
@@ -357,6 +355,8 @@ function pointerToPendulumSpace( evt ) {
 
 
 // ---------- simulation code ----------
+let loop = true;
+const pendulumLog = [];
 
 function toggleController() {
     
@@ -370,6 +370,38 @@ function nudge() {
     const randomValue = ( Math.random() - 0.5 ) / 2;
     thetadot += ( randomValue + Math.sign( randomValue ) ) / l ;
 }
+
+function stop() {
+    loop = false;
+    console.log(pendulumLog.length);
+}
+
+function updateLog() {
+    cState = controllerOn == 1 ? 1 : 0;
+    pendulumLog.push({t, theta, thetadot, x, xdot, cState}); //controllerOn will print as 1 if true
+}
+
+async function saveFile() {
+    // create a new handle
+    const newHandle = await window.showSaveFilePicker();
+  
+    // create a FileSystemWritableFileStream to write to
+    const writableStream = await newHandle.createWritable();
+    // write our file
+    await writableStream.write(JSON.stringify(pendulumLog));
+  
+    // close the file and write the contents to disk.
+    await writableStream.close();
+  }
+
+function print() {
+    console.log(pendulumLog.length);
+    for(i=0;i<pendulumLog.length; i++) {
+        console.log(pendulumLog[i]);
+    }
+    saveFile();
+}
+
 
 // vector operations
 const mul      = (vec , k   ) => vec.map( v => v*k );
@@ -451,18 +483,6 @@ function updateCoordinates() {
     if( theta < -pi ) theta += 2*pi;
 }
 
-const pendulumLog = [];
-
-function updateLog() {
-    pendulumLog.push({t, theta, thetadot, thetaddot, x, xdot, xddot, controllerOn }); //controllerOn will print as 1 if true
-}
-
-function printLog() {
-    //for(i=0;i<30; i++) {
-        //console.log(pendulumLog[i]);
-    //}
-}
-
 function updateGraphics() {
     
     // translate all the slider elements by sliderX
@@ -478,18 +498,16 @@ function updateGraphics() {
     topCircleElements.forEach( elm => elm.style.transform = topCircleTranslate );
 }
 
-
 function mainloop(millis, lastMillis) {
-    if(millis >= 5000) {console.log("done"); console.log(pendulumLog.length); printLog(); return};
-	dt = ( millis - lastMillis ) / 1000 / stepsPerFrame;
-    //console.log(t, x, xdot, xddot, theta, thetadot, thetaddot);
+	if(!loop) {
+        return;
+    }
+    dt = ( millis - lastMillis ) / 1000 / stepsPerFrame;
+    
     // do the physics step as many times as needed 
     for(var s=0; s<stepsPerFrame; ++s) updateCoordinates();
     // update the graphics
     updateGraphics();
-    
-    // print energy of system
-    // console.log( 1/2*m*xdot**2 + 1/2*M*( ( xdot + l*thetadot*Math.cos(theta) )**2+ (l*thetadot*Math.sin(theta))**2 ) + M*g*l*Math.cos(theta) );
     
     // call this again after 1 frame
     requestAnimationFrame( newMillis => mainloop(newMillis, millis) );
@@ -558,11 +576,15 @@ sliders.forEach( elm => elm.onchange = () =>
 const resetButton      = document.getElementById("reset");
 const controllerButton = document.getElementById("toggle-controller");
 const nudgeButton      = document.getElementById("nudge");
+const stopButton      = document.getElementById("stop");
+const printButton      = document.getElementById("print");
 
 // link buttons to callbacks
 resetButton.onpointerdown      = reset;
 controllerButton.onpointerdown = toggleController;
 nudgeButton.onpointerdown      = nudge;
+stopButton.onpointerdown      = stop;
+printButton.onpointerdown      = print;
 
 
 mainloop(0, 0);
