@@ -1,0 +1,11 @@
+system model tutorial:https://ctms.engin.umich.edu/CTMS/index.php?example=InvertedPendulum&section=SystemModeling
+
+theta = angle 
+thetadot = angular velocity 
+thetaddot = angular acceleration
+x = cart position
+xdot = cart velocity
+xddot = cart acceleration
+
+Input to the AI model = return value from the controller (which uses 4 const variables and 4 state variables)
+Output from the AI model = 4 variables (theta, x, thetadot, xdot)

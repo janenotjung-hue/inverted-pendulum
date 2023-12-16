@@ -85,6 +85,16 @@ button:focus {
     margin-bottom: 2rem;
 }
 
+#middle-sliders {
+    width: 100%;
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: 12rem auto 7rem;
+    align-items: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
 #lower-sliders {
     margin-top: 2rem;
     width: 100%;
@@ -95,17 +105,20 @@ button:focus {
 }
 
 #lower-sliders .left,
+#middle-sliders .left,
 #upper-sliders .left {
     grid-column: 1;
 }
 
 #lower-sliders .middle,
+#middle-sliders .middle,
 #upper-sliders .middle {
     grid-column: 2;
     min-width: 1rem;
 }
 
 #lower-sliders .right,
+#middle-sliders .right,
 #upper-sliders .right {
     grid-column: 3;
 }
