@@ -10,8 +10,6 @@ function controller() {
 }
 
 
-
-
 // get some of the elements
 const svgs = Array.from(document.querySelectorAll("svg"));
 const sliderElements = Array.from(document.querySelectorAll(".slider"));
@@ -360,14 +358,14 @@ function pointerToPendulumSpace(evt) {
 
 // ---------- simulation code ----------
 let loop = false;
+var timer;
 const pendulumLog = [];
 
 function updateLog() {
-    pendulumLog.push({ time: t, theta: theta, thetadot: thetadot, x: x, xdot: xdot }); //controllerOn will print as 1 if true
+    pendulumLog.push({ time: t, theta: theta, thetadot: thetadot, x: x, xdot: xdot });
 }
 
 function toggleController() {
-
     controllerOn ^= 1;
     controllerButton.innerHTML = `turn ${controllerOn ? "off" : "on"} controller`;
 }
@@ -384,6 +382,7 @@ function start() {
     thetaSlider.slider.setAttribute('disabled', true);
     loop = true;
     reset();
+    timer = setInterval(updateLog, 50);
 };
 
 function stop() {
@@ -392,6 +391,7 @@ function stop() {
     xSlider.slider.removeAttribute('disabled');
     thetaSlider.slider.removeAttribute('disabled');
     loop = false;
+    clearInterval(timer);
 }
 
 function print() {
@@ -506,7 +506,6 @@ function updateCoordinates() {
 
     // update the vars
     [theta, x, thetadot, xdot] = add(state, RK4step);
-    updateLog();
     // keep theta between -pi and pi
     if (theta > pi) theta -= 2 * pi;
     if (theta < -pi) theta += 2 * pi;
