@@ -358,11 +358,12 @@ function pointerToPendulumSpace(evt) {
 
 // ---------- simulation code ----------
 let loop = false;
-var timer;
 const pendulumLog = [];
 
 function updateLog() {
-    pendulumLog.push({ time: t, theta: theta, thetadot: thetadot, x: x, xdot: xdot });
+    if(loop) {
+        pendulumLog.push({ time: t, theta: theta, thetadot: thetadot, x: x, xdot: xdot });
+    }
 }
 
 function toggleController() {
@@ -382,7 +383,6 @@ function start() {
     thetaSlider.slider.setAttribute('disabled', true);
     loop = true;
     reset();
-    timer = setInterval(updateLog, 50);
 };
 
 function stop() {
@@ -391,7 +391,6 @@ function stop() {
     xSlider.slider.removeAttribute('disabled');
     thetaSlider.slider.removeAttribute('disabled');
     loop = false;
-    clearInterval(timer);
 }
 
 function print() {
@@ -509,6 +508,8 @@ function updateCoordinates() {
     // keep theta between -pi and pi
     if (theta > pi) theta -= 2 * pi;
     if (theta < -pi) theta += 2 * pi;
+
+    updateLog();
 }
 
 function updateGraphics() {
