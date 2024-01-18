@@ -348,10 +348,6 @@ IPython.display.clear_output()
 
 multi_val_performance['AR LSTM'] = feedback_model.evaluate(multi_window.val)
 multi_performance['AR LSTM'] = feedback_model.evaluate(multi_window.test, verbose=0)
-multi_window.plot(feedback_model)
-multi_window.plot(feedback_model, plot_col='thetadot')
-multi_window.plot(feedback_model, plot_col='x')
-multi_window.plot(feedback_model, plot_col='xdot')
 
 x = np.arange(len(multi_performance))
 width = 0.3
