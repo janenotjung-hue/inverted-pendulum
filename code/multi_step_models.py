@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from setup import WindowGenerator, compile_and_fit
+from setup import WindowGenerator, compile_and_fit, compile_and_fit_checkpoints
 
 mpl.rcParams['figure.figsize'] = (8, 6)
 mpl.rcParams['axes.grid'] = False
 
-df= pd.read_csv('../training_datasets/output_1.csv')
+df= pd.read_csv('training_datasets/output_1.csv')
 
 time = pd.to_numeric(df.pop('time'))
 
@@ -18,6 +18,7 @@ plot_cols = ['theta', 'thetadot', 'x', 'xdot']
 plot_features = df[plot_cols]
 #plot_features.index = time
 #_ = plot_features.plot(subplots=True)
+cp_shortcut = 'checkpoints/msm'
 
 column_indices = {name: i for i, name in enumerate(df.columns)}
 
@@ -43,95 +44,9 @@ df_std = df_std.melt(var_name='Column', value_name='Normalized')
 #define training window
 OUT_STEPS = 200
 multi_window = WindowGenerator(input_width=200, label_width=OUT_STEPS, shift=OUT_STEPS, train_df=train_df, val_df=val_df, test_df=test_df)
-val_performance = {}
-performance = {}
-
-class MultiStepLastBaseline(tf.keras.Model):
-  def call(self, inputs):
-    return tf.tile(inputs[:, -1:, :], [1, OUT_STEPS, 1])
-
-last_baseline = MultiStepLastBaseline()
-last_baseline.compile(loss=tf.keras.losses.MeanSquaredError(), metrics=[tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError()])
 
 multi_val_performance = {}
 multi_performance = {}
-
-multi_val_performance['Last'] = last_baseline.evaluate(multi_window.val)
-multi_performance['Last'] = last_baseline.evaluate(multi_window.test, verbose=0)
-
-multi_linear_model = tf.keras.Sequential([
-    # Take the last time-step.
-    # Shape [batch, time, features] => [batch, 1, features]
-    tf.keras.layers.Lambda(lambda x: x[:, -1:, :]),
-    # Shape => [batch, 1, out_steps*features]
-    tf.keras.layers.Dense(OUT_STEPS*num_features,
-                          kernel_initializer=tf.initializers.zeros()),
-    # Shape => [batch, out_steps, features]
-    tf.keras.layers.Reshape([OUT_STEPS, num_features])
-])
-
-history = compile_and_fit(multi_linear_model, multi_window)
-
-IPython.display.clear_output()
-multi_val_performance['Linear'] = multi_linear_model.evaluate(multi_window.val)
-multi_performance['Linear'] = multi_linear_model.evaluate(multi_window.test, verbose=0)
-
-multi_dense_model = tf.keras.Sequential([
-    # Take the last time step.
-    # Shape [batch, time, features] => [batch, 1, features]
-    tf.keras.layers.Lambda(lambda x: x[:, -1:, :]),
-    # Shape => [batch, 1, dense_units]
-    tf.keras.layers.Dense(512, activation='relu'),
-    # Shape => [batch, out_steps*features]
-    tf.keras.layers.Dense(OUT_STEPS*num_features,
-                          kernel_initializer=tf.initializers.zeros()),
-    # Shape => [batch, out_steps, features]
-    tf.keras.layers.Reshape([OUT_STEPS, num_features])
-])
-
-history = compile_and_fit(multi_dense_model, multi_window)
-
-IPython.display.clear_output()
-multi_val_performance['Dense'] = multi_dense_model.evaluate(multi_window.val)
-multi_performance['Dense'] = multi_dense_model.evaluate(multi_window.test, verbose=0)
-
-CONV_WIDTH = 3
-multi_conv_model = tf.keras.Sequential([
-    # Shape [batch, time, features] => [batch, CONV_WIDTH, features]
-    tf.keras.layers.Lambda(lambda x: x[:, -CONV_WIDTH:, :]),
-    # Shape => [batch, 1, conv_units]
-    tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(CONV_WIDTH)),
-    # Shape => [batch, 1,  out_steps*features]
-    tf.keras.layers.Dense(OUT_STEPS*num_features,
-                          kernel_initializer=tf.initializers.zeros()),
-    # Shape => [batch, out_steps, features]
-    tf.keras.layers.Reshape([OUT_STEPS, num_features])
-])
-
-history = compile_and_fit(multi_conv_model, multi_window)
-
-IPython.display.clear_output()
-
-multi_val_performance['Conv'] = multi_conv_model.evaluate(multi_window.val)
-multi_performance['Conv'] = multi_conv_model.evaluate(multi_window.test, verbose=0)
-
-multi_lstm_model = tf.keras.Sequential([
-    # Shape [batch, time, features] => [batch, lstm_units].
-    # Adding more `lstm_units` just overfits more quickly.
-    tf.keras.layers.LSTM(32, return_sequences=False),
-    # Shape => [batch, out_steps*features].
-    tf.keras.layers.Dense(OUT_STEPS*num_features,
-                          kernel_initializer=tf.initializers.zeros()),
-    # Shape => [batch, out_steps, features].
-    tf.keras.layers.Reshape([OUT_STEPS, num_features])
-])
-
-history = compile_and_fit(multi_lstm_model, multi_window)
-
-IPython.display.clear_output()
-
-multi_val_performance['LSTM'] = multi_lstm_model.evaluate(multi_window.val)
-multi_performance['LSTM'] = multi_lstm_model.evaluate(multi_window.test, verbose=0)
 
 class FeedBack(tf.keras.Model):
   def __init__(self, units, out_steps):
@@ -193,26 +108,3 @@ IPython.display.clear_output()
 
 multi_val_performance['AR LSTM'] = feedback_model.evaluate(multi_window.val)
 multi_performance['AR LSTM'] = feedback_model.evaluate(multi_window.test, verbose=0)
-
-x = np.arange(len(multi_performance))
-width = 0.3
-
-print('MAE for all outputs')
-for name, value in multi_performance.items():
-  print(f'{name:15s}: {value[1]:0.5f}')
-
-metric_name = 'mean_absolute_percentage_error'
-metric_index = feedback_model.metrics_names.index(metric_name)
-val_mape = [v[metric_index] for v in multi_val_performance.values()]
-test_mape = [v[metric_index] for v in multi_performance.values()]
-
-rects = plt.bar(x - 0.17, val_mape, width, label='Validation')
-plt.bar_label(rects, fmt='{:.2f}%', padding=3)
-
-rects = plt.bar(x + 0.17, test_mape, width, label='Test')
-plt.bar_label(rects, fmt='{:.2f}%', padding=3)
-
-plt.xticks(ticks=x, labels=performance.keys(),
-           rotation=45)
-plt.ylabel('MAPE (average over all outputs) %')
-_ = plt.legend()

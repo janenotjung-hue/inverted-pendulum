@@ -168,7 +168,7 @@ def compile_and_fit_checkpoints(model, window, checkpoint_path):
     checkpoint_dir = os.path.dirname(checkpoint_path)
 
     cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
-                                                 save_weights_only=False,
+                                                 save_weights_only=True,
                                                  verbose=1)
 
     model.compile(loss=tf.keras.losses.MeanSquaredError(), 

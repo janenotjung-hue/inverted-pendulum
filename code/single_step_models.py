@@ -67,7 +67,7 @@ dense = tf.keras.Sequential([
     tf.keras.layers.Dense(units=64, activation='relu'),
     tf.keras.layers.Dense(units=num_features)
 ])
-history = compile_and_fit_checkpoints(dense, window, checkpoint_path=f'{cp_shortcut}/dense/cp.ckpt')
+history = compile_and_fit_checkpoints(dense, window, checkpoint_path=f'{cp_shortcut}/dense/')
 
 val_performance['Dense'] = dense.evaluate(window.val)
 performance['Dense'] = dense.evaluate(window.test, verbose=0)
@@ -81,7 +81,7 @@ lstm_model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(units=num_features)
 ])
 
-history = compile_and_fit_checkpoints(lstm_model, window, checkpoint_path=f'{cp_shortcut}/lstm/cp.ckpt')
+history = compile_and_fit_checkpoints(lstm_model, window, checkpoint_path=f'{cp_shortcut}/lstm/')
 
 IPython.display.clear_output()
 val_performance['LSTM'] = lstm_model.evaluate( window.val)
@@ -104,7 +104,7 @@ residual_lstm = ResidualWrapper(
         kernel_initializer=tf.initializers.zeros())
 ]))
 
-history = compile_and_fit_checkpoints(residual_lstm, window, checkpoint_path=f'{cp_shortcut}/residual/cp.ckpt')
+history = compile_and_fit_checkpoints(residual_lstm, window, checkpoint_path=f'{cp_shortcut}/residual/')
 
 val_performance['Residual LSTM'] = residual_lstm.evaluate(window.val)
 performance['Residual LSTM'] = residual_lstm.evaluate(window.test, verbose=0)

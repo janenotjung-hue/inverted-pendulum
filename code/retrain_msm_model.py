@@ -6,58 +6,54 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from setup import WindowGenerator, compile, fit_save
+from setup import WindowGenerator, compile, compile_and_fit_checkpoints
 
-file_array = os.listdir('../training_datasets')
-def getData(address):
-    df = pd.read_csvs(f"../training_datasets/output_{address}.csv")
+OUT_STEPS=200
+file_array = os.listdir('training_datasets')
+records = {}
+def build(model, path_name):
+    model_record = {}
+    for i in range(len(file_array)-1):
+        print(f'Run {i+1}')
+        df = pd.read_csv("training_datasets/"+file_array[i])
 
-    time = pd.to_numeric(df.pop('time'))
+        time = pd.to_numeric(df.pop('time'))
 
-    plot_cols = ['theta', 'thetadot', 'x', 'xdot']
-    plot_features = df[plot_cols]
+        plot_cols = ['theta', 'thetadot', 'x', 'xdot']
+        plot_features = df[plot_cols]
 
-    column_indices = {name: i for i, name in enumerate(df.columns)}
+        column_indices = {name: i for i, name in enumerate(df.columns)}
 
-    #splitting data by 70% training, 20% validating, 10% testing
-    n = len(df)
-    train_df = df[0:int(n*0.7)]
-    val_df = df[int(n*0.7):int(n*0.9)]
-    test_df = df[int(n*0.9):]
+        #splitting data by 70% training, 20% validating, 10% testing
+        n = len(df)
+        train_df = df[0:int(n*0.7)]
+        val_df = df[int(n*0.7):int(n*0.9)]
+        test_df = df[int(n*0.9):]
 
-    num_features = df.shape[1]
+        num_features = df.shape[1]
 
-    #normalize data: subtract the mean and divide by the standard deviation of each feature.
-    train_mean = train_df.mean()
-    train_std = train_df.std()
+        #normalize data: subtract the mean and divide by the standard deviation of each feature.
+        train_mean = train_df.mean()
+        train_std = train_df.std()
 
-    train_df = (train_df - train_mean) / train_std
-    val_df = (val_df - train_mean) / train_std
-    test_df = (test_df - train_mean) / train_std
+        train_df = (train_df - train_mean) / train_std
+        val_df = (val_df - train_mean) / train_std
+        test_df = (test_df - train_mean) / train_std
 
-    df_std = (df - train_mean) / train_std
-    df_std = df_std.melt(var_name='Column', value_name='Normalized')
+        df_std = (df - train_mean) / train_std
+        df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
-    return train_df, val_df, test_df, num_features
+        window = WindowGenerator(input_width=100, label_width=100, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
+        compile_and_fit_checkpoints(model, window, checkpoint_path=f'checkpoints/msm/{path_name}')
+    return model_record
 
-df= pd.read_csv('../training_datasets/output_1.csv')
-train_df, val_df, test_df, num_features = getData(1)
+dense = tf.keras.models.load_model('checkpoints/msm/dense')
+records['Dense'] = build(dense, 'dense')
 
-#define training window
-OUT_STEPS = 200
-multi_window = WindowGenerator(input_width=200, label_width=OUT_STEPS, shift=OUT_STEPS, train_df=train_df, val_df=val_df, test_df=test_df)
+lstm = tf.keras.models.load_model('checkpoints/msm/lstm')
+records['LSTM'] = build(lstm, 'lstm')
 
-linear_path = "training_linear/cp.ckpt"
-linear = tf.keras.Sequential([
-    # Take the last time-step.
-    # Shape [batch, time, features] => [batch, 1, features]
-    tf.keras.layers.Lambda(lambda x: x[:, -1:, :]),
-    # Shape => [batch, 1, out_steps*features]
-    tf.keras.layers.Dense(OUT_STEPS*num_features,
-                          kernel_initializer=tf.initializers.zeros()),
-    # Shape => [batch, out_steps, features]
-    tf.keras.layers.Reshape([OUT_STEPS, num_features])
-])
-compile(linear)
-fit_save(linear, multi_window, linear_path)
-linear.save('../')
+residual_lstm = tf.keras.models.load_model('checkpoints/msm/residual')
+records['Residual LSTM'] = build(residual_lstm, 'residual')
+
+print(records.items())
