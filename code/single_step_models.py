@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from setup import WindowGenerator, compile_and_fit
+from setup import WindowGenerator, compile_and_fit, compile_and_fit_checkpoints
 
 mpl.rcParams['figure.figsize'] = (8, 6)
 mpl.rcParams['axes.grid'] = False
@@ -39,6 +39,7 @@ df_std = (df - train_mean) / train_std
 df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
 #define training window
+cp_shortcut = 'checkpoints/ssm'
 window = WindowGenerator(input_width=100, label_width=100, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
 val_performance = {}
 performance = {}
@@ -66,7 +67,7 @@ dense = tf.keras.Sequential([
     tf.keras.layers.Dense(units=64, activation='relu'),
     tf.keras.layers.Dense(units=num_features)
 ])
-history = compile_and_fit(dense, window)
+history = compile_and_fit_checkpoints(dense, window, checkpoint_path=f'{cp_shortcut}/dense/cp.ckpt')
 
 val_performance['Dense'] = dense.evaluate(window.val)
 performance['Dense'] = dense.evaluate(window.test, verbose=0)
@@ -80,7 +81,7 @@ lstm_model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(units=num_features)
 ])
 
-history = compile_and_fit(lstm_model, window)
+history = compile_and_fit_checkpoints(lstm_model, window, checkpoint_path=f'{cp_shortcut}/lstm/cp.ckpt')
 
 IPython.display.clear_output()
 val_performance['LSTM'] = lstm_model.evaluate( window.val)
@@ -103,7 +104,7 @@ residual_lstm = ResidualWrapper(
         kernel_initializer=tf.initializers.zeros())
 ]))
 
-history = compile_and_fit(residual_lstm, window)
+history = compile_and_fit_checkpoints(residual_lstm, window, checkpoint_path=f'{cp_shortcut}/residual/cp.ckpt')
 
 val_performance['Residual LSTM'] = residual_lstm.evaluate(window.val)
 performance['Residual LSTM'] = residual_lstm.evaluate(window.test, verbose=0)

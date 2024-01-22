@@ -4,15 +4,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from setup import WindowGenerator, compile_and_fit
+from setup import WindowGenerator, compile_and_fit, compile_and_fit_checkpoints
 
-file_array = os.listdir('../training_datasets')
+file_array = os.listdir('training_datasets')
 records = {}
-def build(model):
+def build(model, path_name):
     model_record = {}
-    for i in range(len(file_array)):
-        print(f'Run {i}')
-        df = pd.read_csv("../training_datasets/"+file_array[i])
+    for i in range(len(file_array)-1):
+        print(f'Run {i+1}')
+        df = pd.read_csv("training_datasets/"+file_array[i])
 
         time = pd.to_numeric(df.pop('time'))
 
@@ -41,20 +41,16 @@ def build(model):
         df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
         window = WindowGenerator(input_width=100, label_width=100, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
-        compile_and_fit(model, window)
-        model_record[i] = [model.evaluate(window.val), model.evaluate(window.test, verbose=0)]
+        compile_and_fit_checkpoints(model, window, checkpoint_path=f'checkpoints/ssm/{path_name}')
     return model_record
 
-dense = tf.keras.models.load_model('../models/ssm_dense')
-records['Dense'] = build(dense)
+dense = tf.keras.models.load_model('checkpoints/ssm/dense')
+records['Dense'] = build(dense, 'dense')
 
-lstm = tf.keras.models.load_model('../models/ssm_lstm')
-records['LSTM'] = build(lstm)
+lstm = tf.keras.models.load_model('checkpoints/ssm/lstm')
+records['LSTM'] = build(lstm, 'lstm')
 
-residual_lstm = tf.keras.models.load_model('../models/ssm_residual')
-records['Residual LSTM'] = build(residual_lstm)
+residual_lstm = tf.keras.models.load_model('checkpoints/ssm/residual')
+records['Residual LSTM'] = build(residual_lstm, 'residual')
 
 print(records.items())
-
-for name, item in records.items():
-  print(f'Run {name}: {item[4][0][2]}, {item[4][1][2]}')
