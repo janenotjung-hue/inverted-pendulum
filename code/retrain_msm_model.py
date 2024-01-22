@@ -9,6 +9,8 @@ import tensorflow as tf
 from setup import WindowGenerator, compile, compile_and_fit_checkpoints
 
 OUT_STEPS=200
+CONV_WIDTH = 3
+
 file_array = os.listdir('training_datasets')
 records = {}
 def build(model, path_name):
@@ -43,17 +45,18 @@ def build(model, path_name):
         df_std = (df - train_mean) / train_std
         df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
-        window = WindowGenerator(input_width=100, label_width=100, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
+        window = WindowGenerator(input_width=200, label_width=OUT_STEPS, shift=OUT_STEPS, train_df=train_df, val_df=val_df, test_df=test_df)
         compile_and_fit_checkpoints(model, window, checkpoint_path=f'checkpoints/msm/{path_name}')
     return model_record
+
+linear = tf.keras.models.load_model('checkpoints/msm/linear')
+records['Linear'] = build(linear, 'linear')
 
 dense = tf.keras.models.load_model('checkpoints/msm/dense')
 records['Dense'] = build(dense, 'dense')
 
+conv = tf.keras.models.load_model('checkpoints/msm/conv')
+records['Conv'] = build(conv, 'conv')
+
 lstm = tf.keras.models.load_model('checkpoints/msm/lstm')
 records['LSTM'] = build(lstm, 'lstm')
-
-residual_lstm = tf.keras.models.load_model('checkpoints/msm/residual')
-records['Residual LSTM'] = build(residual_lstm, 'residual')
-
-print(records.items())

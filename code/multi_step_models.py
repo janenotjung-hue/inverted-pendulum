@@ -48,6 +48,91 @@ multi_window = WindowGenerator(input_width=200, label_width=OUT_STEPS, shift=OUT
 multi_val_performance = {}
 multi_performance = {}
 
+class MultiStepLastBaseline(tf.keras.Model):
+  def call(self, inputs):
+    return tf.tile(inputs[:, -1:, :], [1, OUT_STEPS, 1])
+
+last_baseline = MultiStepLastBaseline()
+last_baseline.compile(loss=tf.keras.losses.MeanSquaredError(), metrics=[tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError()])
+
+
+multi_val_performance['Last'] = last_baseline.evaluate(multi_window.val)
+multi_performance['Last'] = last_baseline.evaluate(multi_window.test, verbose=0)
+
+multi_linear_model = tf.keras.Sequential([
+    # Take the last time-step.
+    # Shape [batch, time, features] => [batch, 1, features]
+    tf.keras.layers.Lambda(lambda x: x[:, -1:, :]),
+    # Shape => [batch, 1, out_steps*features]
+    tf.keras.layers.Dense(OUT_STEPS*num_features,
+                          kernel_initializer=tf.initializers.zeros()),
+    # Shape => [batch, out_steps, features]
+    tf.keras.layers.Reshape([OUT_STEPS, num_features])
+])
+
+history = compile_and_fit_checkpoints(multi_linear_model, multi_window, checkpoint_path=f'{cp_shortcut}/linear/')
+
+IPython.display.clear_output()
+multi_val_performance['Linear'] = multi_linear_model.evaluate(multi_window.val)
+multi_performance['Linear'] = multi_linear_model.evaluate(multi_window.test, verbose=0)
+
+multi_dense_model = tf.keras.Sequential([
+    # Take the last time step.
+    # Shape [batch, time, features] => [batch, 1, features]
+    tf.keras.layers.Lambda(lambda x: x[:, -1:, :]),
+    # Shape => [batch, 1, dense_units]
+    tf.keras.layers.Dense(512, activation='relu'),
+    # Shape => [batch, out_steps*features]
+    tf.keras.layers.Dense(OUT_STEPS*num_features,
+                          kernel_initializer=tf.initializers.zeros()),
+    # Shape => [batch, out_steps, features]
+    tf.keras.layers.Reshape([OUT_STEPS, num_features])
+])
+
+history = compile_and_fit_checkpoints(multi_dense_model, multi_window, checkpoint_path=f'{cp_shortcut}/dense/')
+
+IPython.display.clear_output()
+multi_val_performance['Dense'] = multi_dense_model.evaluate(multi_window.val)
+multi_performance['Dense'] = multi_dense_model.evaluate(multi_window.test, verbose=0)
+
+CONV_WIDTH = 3
+multi_conv_model = tf.keras.Sequential([
+    # Shape [batch, time, features] => [batch, CONV_WIDTH, features]
+    tf.keras.layers.Lambda(lambda x: x[:, -CONV_WIDTH:, :]),
+    # Shape => [batch, 1, conv_units]
+    tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(CONV_WIDTH)),
+    # Shape => [batch, 1,  out_steps*features]
+    tf.keras.layers.Dense(OUT_STEPS*num_features,
+                          kernel_initializer=tf.initializers.zeros()),
+    # Shape => [batch, out_steps, features]
+    tf.keras.layers.Reshape([OUT_STEPS, num_features])
+])
+
+history = compile_and_fit_checkpoints(multi_conv_model, multi_window, checkpoint_path=f'{cp_shortcut}/conv/')
+
+IPython.display.clear_output()
+
+multi_val_performance['Conv'] = multi_conv_model.evaluate(multi_window.val)
+multi_performance['Conv'] = multi_conv_model.evaluate(multi_window.test, verbose=0)
+
+multi_lstm_model = tf.keras.Sequential([
+    # Shape [batch, time, features] => [batch, lstm_units].
+    # Adding more `lstm_units` just overfits more quickly.
+    tf.keras.layers.LSTM(32, return_sequences=False),
+    # Shape => [batch, out_steps*features].
+    tf.keras.layers.Dense(OUT_STEPS*num_features,
+                          kernel_initializer=tf.initializers.zeros()),
+    # Shape => [batch, out_steps, features].
+    tf.keras.layers.Reshape([OUT_STEPS, num_features])
+])
+
+history = compile_and_fit_checkpoints(multi_lstm_model, multi_window, checkpoint_path=f'{cp_shortcut}/ltsm/')
+
+IPython.display.clear_output()
+
+multi_val_performance['LSTM'] = multi_lstm_model.evaluate(multi_window.val)
+multi_performance['LSTM'] = multi_lstm_model.evaluate(multi_window.test, verbose=0)
+
 class FeedBack(tf.keras.Model):
   def __init__(self, units, out_steps):
     super().__init__()
