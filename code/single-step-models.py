@@ -1,3 +1,4 @@
+import os
 import IPython
 import IPython.display
 import matplotlib as mpl
@@ -9,14 +10,12 @@ import tensorflow as tf
 mpl.rcParams['figure.figsize'] = (8, 6)
 mpl.rcParams['axes.grid'] = False
 
-df= pd.read_csv('./output.csv')
+df= pd.read_csv('../training-datasets/output_1.csv')
 
 time = pd.to_numeric(df.pop('time'))
 
 plot_cols = ['theta', 'thetadot', 'x', 'xdot']
 plot_features = df[plot_cols]
-#plot_features.index = time
-#_ = plot_features.plot(subplots=True)
 
 column_indices = {name: i for i, name in enumerate(df.columns)}
 
@@ -38,9 +37,6 @@ test_df = (test_df - train_mean) / train_std
 
 df_std = (df - train_mean) / train_std
 df_std = df_std.melt(var_name='Column', value_name='Normalized')
-#plt.figure(figsize=(12, 6))
-#ax = sns.violinplot(x='Column', y='Normalized', data=df_std)
-#_ = ax.set_xticklabels(df.keys(), rotation=90)
 
 #WindowGenerator used to modify/display training models
 class WindowGenerator():
@@ -208,14 +204,14 @@ class Baseline(tf.keras.Model):
       return inputs
     result = inputs[:, :, self.label_index]
     return result[:, :, tf.newaxis]
-"""""
+
 baseline = Baseline()
 baseline.compile(loss=tf.keras.losses.MeanSquaredError(),
                  metrics=[tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError()])
 
 val_performance['Baseline'] = baseline.evaluate(window.val)
 performance['Baseline'] = baseline.evaluate(window.test, verbose=0)
-"""""
+
 dense = tf.keras.Sequential([
     tf.keras.layers.Dense(units=64, activation='relu'),
     tf.keras.layers.Dense(units=64, activation='relu'),
@@ -226,6 +222,7 @@ history = compile_and_fit(dense, window)
 val_performance['Dense'] = dense.evaluate(window.val)
 performance['Dense'] = dense.evaluate(window.test, verbose=0)
 print()
+
 
 lstm_model = tf.keras.models.Sequential([
     # Shape [batch, time, features] => [batch, time, lstm_units]
@@ -263,15 +260,20 @@ IPython.display.clear_output()
 val_performance['Residual LSTM'] = residual_lstm.evaluate(window.val)
 performance['Residual LSTM'] = residual_lstm.evaluate(window.test, verbose=0)
 
+window.plot_all(baseline)
+window.plot_all(dense)
+window.plot_all(lstm_model)
+window.plot_all(residual_lstm)
+
 x = np.arange(len(performance))
 width = 0.3
 
-print('MAE for all outputs')
+print('Loss, MAE, MAPE for all models')
 for name, value in performance.items():
-  print(f'{name:15s}: {value[1]:0.5f}')
+  print(f'{name:15s}: {value[0]:0.5e}, {value[1]:0.5f}, {value[2]:0.2f}%')
 
 metric_name = 'mean_absolute_percentage_error'
-metric_index = lstm_model.metrics_names.index(metric_name)
+metric_index = residual_lstm.metrics_names.index(metric_name)
 val_mape = [v[metric_index] for v in val_performance.values()]
 test_mape = [v[metric_index] for v in performance.values()]
 
@@ -283,5 +285,5 @@ plt.bar_label(rects, fmt='{:.2f}%', padding=3)
 
 plt.xticks(ticks=x, labels=performance.keys(),
            rotation=45)
-plt.ylabel('MAPE (average over all outputs) %')
+plt.ylabel('MAPE %')
 _ = plt.legend()
