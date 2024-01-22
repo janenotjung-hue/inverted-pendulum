@@ -157,3 +157,20 @@ def compile_and_fit(model, window, patience=2):
                         validation_data=window.val,
                         callbacks=[early_stopping])
     return history
+
+def compile(model):
+    model.compile(loss=tf.keras.losses.MeanSquaredError(), 
+                  optimizer=tf.keras.optimizers.Adam(), 
+                  metrics=[tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError()])
+    return model
+
+def fit_save(model, window, checkpoint_path):
+    checkpoint_dir = os.path.dirname(checkpoint_path)
+
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                 save_weights_only=True,
+                                                 verbose=1)
+
+    model.fit(window.train, epochs=MAX_EPOCHS, 
+                        validation_data=window.val,
+                        callbacks=[cp_callback])
