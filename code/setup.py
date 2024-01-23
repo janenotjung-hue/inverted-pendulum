@@ -167,7 +167,7 @@ def compile(model):
 
 def compile_and_fit_checkpoints(model, window, checkpoint_path):
     
-    batch_size=50
+    batch_size=32
     n_batches = len(window.train) / batch_size
     n_batches = math.ceil(n_batches) 
 

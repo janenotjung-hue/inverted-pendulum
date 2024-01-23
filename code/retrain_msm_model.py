@@ -17,7 +17,7 @@ def build(model, path_name):
     model_record = {}
     for i in range(len(file_array)-1):
         print(f'Run {i+1}')
-        df = pd.read_csv("training_datasets/"+file_array[i])
+        df = pd.read_csv("training_datasets/"+file_array[i+1])
 
         time = pd.to_numeric(df.pop('time'))
 
@@ -46,17 +46,17 @@ def build(model, path_name):
         df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
         window = WindowGenerator(input_width=200, label_width=OUT_STEPS, shift=OUT_STEPS, train_df=train_df, val_df=val_df, test_df=test_df)
-        compile_and_fit_checkpoints(model, window, checkpoint_path=f'checkpoints/msm/{path_name}')
+        compile_and_fit_checkpoints(model, window, checkpoint_path=path_name+i+'/cp-{epoch:04d}.ckpt')
     return model_record
 
-linear = tf.keras.models.load_model('checkpoints/msm/linear')
-records['Linear'] = build(linear, 'linear')
+linear = tf.keras.models.load_model('checkpoints/msm/linear/')
+records['Linear'] = build(linear, 'checkpoints/msm/linear_/')
 
-dense = tf.keras.models.load_model('checkpoints/msm/dense')
-records['Dense'] = build(dense, 'dense')
+dense = tf.keras.models.load_model('checkpoints/msm/dense/')
+records['Dense'] = build(dense, 'checkpoints/msm/dense_/')
 
-conv = tf.keras.models.load_model('checkpoints/msm/conv')
-records['Conv'] = build(conv, 'conv')
+conv = tf.keras.models.load_model('checkpoints/msm/conv/')
+records['Conv'] = build(conv, 'checkpoints/msm/conv_/')
 
-lstm = tf.keras.models.load_model('checkpoints/msm/lstm')
-records['LSTM'] = build(lstm, 'lstm')
+lstm = tf.keras.models.load_model('checkpoints/msm/lstm/')
+records['LSTM'] = build(lstm, 'checkpoints/msm/lstm_/')

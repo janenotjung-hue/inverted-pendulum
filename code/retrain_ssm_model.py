@@ -13,7 +13,8 @@ def build(model, path_name):
     model_record = {}
     for i in range(len(file_array)-1):
         print(f'Run {i+1}')
-        df = pd.read_csv("training_datasets/"+file_array[i])
+        run_path=f'{path_name}{i+2}'
+        df = pd.read_csv("training_datasets/"+file_array[i+1])
 
         time = pd.to_numeric(df.pop('time'))
 
@@ -42,14 +43,14 @@ def build(model, path_name):
         df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
         window = WindowGenerator(input_width=100, label_width=100, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
-        compile_and_fit_checkpoints(model, window, checkpoint_path=path_name+'cp-{epoch:04d}.ckpt')
+        compile_and_fit_checkpoints(model, window, checkpoint_path=run_path+'/cp-{epoch:04d}.ckpt')
     return model_record
 
 dense = tf.keras.models.load_model('checkpoints/ssm/dense/')
-records['Dense'] = build(dense, 'checkpoints/ssm/dense_2/')
+records['Dense'] = build(dense, 'checkpoints/ssm/dense_')
 
 lstm = tf.keras.models.load_model('checkpoints/ssm/lstm/')
-records['LSTM'] = build(lstm, 'checkpoints/ssm/lstm_2/')
+records['LSTM'] = build(lstm, 'checkpoints/ssm/lstm_')
 
 residual_lstm = tf.keras.models.load_model('checkpoints/ssm/residual/')
-records['Residual LSTM'] = build(residual_lstm, 'checkpoints/ssm/residual_2/')
+records['Residual LSTM'] = build(residual_lstm, 'checkpoints/ssm/residual_')
