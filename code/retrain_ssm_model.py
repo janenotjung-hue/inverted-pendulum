@@ -6,6 +6,7 @@ import pandas as pd
 import tensorflow as tf
 from setup import WindowGenerator, compile_and_fit, compile_and_fit_checkpoints
 
+MAX_EPOCHS = 20
 file_array = os.listdir('training_datasets')
 records = {}
 def build(model, path_name):
@@ -41,16 +42,14 @@ def build(model, path_name):
         df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
         window = WindowGenerator(input_width=100, label_width=100, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
-        compile_and_fit_checkpoints(model, window, checkpoint_path=f'checkpoints/ssm/{path_name}')
+        compile_and_fit_checkpoints(model, window, checkpoint_path=path_name+'cp-{epoch:04d}.ckpt')
     return model_record
 
-dense = tf.keras.models.load_model('checkpoints/ssm/dense')
-records['Dense'] = build(dense, 'dense')
+dense = tf.keras.models.load_model('checkpoints/ssm/dense/')
+records['Dense'] = build(dense, 'checkpoints/ssm/dense_2/')
 
-lstm = tf.keras.models.load_model('checkpoints/ssm/lstm')
-records['LSTM'] = build(lstm, 'lstm')
+lstm = tf.keras.models.load_model('checkpoints/ssm/lstm/')
+records['LSTM'] = build(lstm, 'checkpoints/ssm/lstm_2/')
 
-residual_lstm = tf.keras.models.load_model('checkpoints/ssm/residual')
-records['Residual LSTM'] = build(residual_lstm, 'residual')
-
-print(records.items())
+residual_lstm = tf.keras.models.load_model('checkpoints/ssm/residual/')
+records['Residual LSTM'] = build(residual_lstm, 'checkpoints/ssm/residual_2/')

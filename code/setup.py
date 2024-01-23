@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+import math
 
 class WindowGenerator():
     def __init__(self, input_width, label_width, shift,
@@ -165,11 +166,15 @@ def compile(model):
     return model
 
 def compile_and_fit_checkpoints(model, window, checkpoint_path):
-    checkpoint_dir = os.path.dirname(checkpoint_path)
+    
+    batch_size=50
+    n_batches = len(window.train) / batch_size
+    n_batches = math.ceil(n_batches) 
 
     cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                  save_weights_only=True,
-                                                 verbose=1)
+                                                 verbose=1,
+                                                 save_freq=5*n_batches)
 
     model.compile(loss=tf.keras.losses.MeanSquaredError(), 
                   optimizer=tf.keras.optimizers.Adam(), 
