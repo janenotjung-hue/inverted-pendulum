@@ -617,4 +617,35 @@ resetButton.onpointerdown = reset;
 printButton.onpointerdown = print;
 saveButton.onpointerdown = save;
 
+const test = document.getElementById("test")
+
+const cars = [
+ { "make":"Porsche", "model":"911S" },
+ { "make":"Mercedes-Benz", "model":"220SE" },
+ { "make":"Jaguar","model": "Mark VII" }
+];
+
+test.onclick= function(){
+    fetch("http://127.0.0.1:5000/receiver", 
+        {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+
+        body:JSON.stringify(cars)}).then(res=>{
+                if(res.ok){
+                    return res.json()
+                }else{
+                    alert("something is wrong")
+                }
+            }).then(jsonResponse=>{
+                
+                console.log(jsonResponse)
+            } 
+            ).catch((err) => console.error(err));
+            
+           }
+
 mainloop(0,0);
