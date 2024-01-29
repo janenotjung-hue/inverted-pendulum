@@ -1,10 +1,5 @@
-import os
-import IPython
-import IPython.display
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 import math
 
@@ -144,6 +139,7 @@ WindowGenerator.test = test
 WindowGenerator.example = example
 
 MAX_EPOCHS = 20
+num_features = 4
 
 def compile_and_fit(model, window, patience=2):
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
@@ -172,9 +168,11 @@ def compile_and_fit_checkpoints(model, window, checkpoint_path):
     n_batches = math.ceil(n_batches) 
 
     cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
-                                                 save_weights_only=True,
-                                                 verbose=1,
-                                                 save_freq=5*n_batches)
+                                                     monitor="loss",
+                                                     save_weights_only=True,
+                                                     save_best_only=True,
+                                                     verbose=1,
+                                                     save_freq=10*n_batches)
 
     model.compile(loss=tf.keras.losses.MeanSquaredError(), 
                   optimizer=tf.keras.optimizers.Adam(), 
@@ -185,3 +183,96 @@ def compile_and_fit_checkpoints(model, window, checkpoint_path):
                         callbacks=[cp_callback])
     
     return history
+
+#SSM Models
+class ResidualWrapper(tf.keras.Model):
+  def __init__(self, model):
+    super().__init__()
+    self.model = model
+
+  def call(self, inputs, *args, **kwargs):
+    delta = self.model(inputs, *args, **kwargs)
+    return inputs + delta
+
+def create_ssm_dense_model():
+    model = tf.keras.Sequential([
+    tf.keras.layers.Dense(units=64, activation='relu'),
+    tf.keras.layers.Dense(units=64, activation='relu'),
+    tf.keras.layers.Dense(units=num_features)])
+    return compile(model)
+
+def create_ssm_conv_model():
+    model = tf.keras.Sequential([
+    tf.keras.layers.Conv1D(filters=32,
+                           kernel_size=(3,),
+                           activation='relu'),
+    tf.keras.layers.Dense(units=32, activation='relu'),
+    tf.keras.layers.Dense(units=num_features),
+    ])
+    return compile(model)
+
+def create_ssm_lstm_model():
+   model = tf.keras.models.Sequential([
+    tf.keras.layers.LSTM(32, return_sequences=True),
+    tf.keras.layers.Dense(units=num_features)])
+   return compile(model)
+
+def create_ssm_residual_model():
+   model = ResidualWrapper(
+    tf.keras.Sequential([
+    tf.keras.layers.LSTM(32, return_sequences=True),
+    tf.keras.layers.Dense(
+        num_features,
+        kernel_initializer=tf.initializers.zeros())]))
+   return compile(model)
+
+#MSM Models
+OUT_STEPS=200
+def create_msm_linear_model():
+    model =  tf.keras.Sequential([
+       tf.keras.layers.Lambda(lambda x: x[:, -1:, :]),
+       tf.keras.layers.Dense(OUT_STEPS*num_features, kernel_initializer=tf.initializers.zeros()),
+       tf.keras.layers.Reshape([OUT_STEPS, num_features])])
+    return compile(model)
+
+def create_msm_dense_model():
+    model = tf.keras.Sequential([
+    # Take the last time step.
+    # Shape [batch, time, features] => [batch, 1, features]
+    tf.keras.layers.Lambda(lambda x: x[:, -1:, :]),
+    # Shape => [batch, 1, dense_units]
+    tf.keras.layers.Dense(512, activation='relu'),
+    # Shape => [batch, out_steps*features]
+    tf.keras.layers.Dense(OUT_STEPS*num_features,
+                          kernel_initializer=tf.initializers.zeros()),
+    # Shape => [batch, out_steps, features]
+    tf.keras.layers.Reshape([OUT_STEPS, num_features])
+    ])
+    return compile(model)
+
+def create_msm_conv_model():
+   CONV_WIDTH = 3
+   model = tf.keras.Sequential([
+    # Shape [batch, time, features] => [batch, CONV_WIDTH, features]
+    tf.keras.layers.Lambda(lambda x: x[:, -CONV_WIDTH:, :]),
+    # Shape => [batch, 1, conv_units]
+    tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(CONV_WIDTH)),
+    # Shape => [batch, 1,  out_steps*features]
+    tf.keras.layers.Dense(OUT_STEPS*num_features,
+                          kernel_initializer=tf.initializers.zeros()),
+    # Shape => [batch, out_steps, features]
+    tf.keras.layers.Reshape([OUT_STEPS, num_features])
+    ])
+   return compile(model)
+
+def create_msm_lstm_model():
+   model = tf.keras.Sequential([
+    # Shape [batch, time, features] => [batch, lstm_units].
+    # Adding more `lstm_units` just overfits more quickly.
+    tf.keras.layers.LSTM(32, return_sequences=False),
+    # Shape => [batch, out_steps*features].
+    tf.keras.layers.Dense(OUT_STEPS*num_features,
+                          kernel_initializer=tf.initializers.zeros()),
+    # Shape => [batch, out_steps, features].
+    tf.keras.layers.Reshape([OUT_STEPS, num_features])])
+   return compile(model)
