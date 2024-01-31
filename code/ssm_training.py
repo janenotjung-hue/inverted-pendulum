@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from setup import WindowGenerator, compile_and_fit_checkpoints, create_ssm_dense_model, create_ssm_conv_model, create_ssm_lstm_model, create_ssm_residual_model
+from setup import WindowGenerator, fit_checkpoints, create_ssm_dense_model, create_ssm_conv_model, create_ssm_lstm_model, create_ssm_residual_model
 
 MAX_EPOCHS = 20
 file_array = os.listdir('training_sets')
@@ -43,7 +43,7 @@ def build(model, window, path_name):
 
         window = WindowGenerator(input_width=input_width, label_width=label_width, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
         checkpoint_path = path_name+'/cp-{epoch:04d}.ckpt'
-        history = compile_and_fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
+        history = fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
     return history
 
 dense = create_ssm_dense_model()

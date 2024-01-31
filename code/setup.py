@@ -161,7 +161,7 @@ def compile(model):
                   metrics=[tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError()])
     return model
 
-def compile_and_fit_checkpoints(model, window, checkpoint_path):
+def fit_checkpoints(model, window, checkpoint_path):
     
     batch_size=32
     n_batches = len(window.train) / batch_size

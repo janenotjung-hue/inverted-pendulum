@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from setup import WindowGenerator, compile_and_fit, compile_and_fit_checkpoints
+from setup import WindowGenerator, compile_and_fit, fit_checkpoints
 
 mpl.rcParams['figure.figsize'] = (8, 6)
 mpl.rcParams['axes.grid'] = False
@@ -70,7 +70,7 @@ multi_linear_model = tf.keras.Sequential([
     tf.keras.layers.Reshape([OUT_STEPS, num_features])
 ])
 
-history = compile_and_fit_checkpoints(multi_linear_model, multi_window, checkpoint_path=f'{cp_shortcut}/linear/')
+history = fit_checkpoints(multi_linear_model, multi_window, checkpoint_path=f'{cp_shortcut}/linear/')
 
 IPython.display.clear_output()
 multi_val_performance['Linear'] = multi_linear_model.evaluate(multi_window.val)
@@ -89,7 +89,7 @@ multi_dense_model = tf.keras.Sequential([
     tf.keras.layers.Reshape([OUT_STEPS, num_features])
 ])
 
-history = compile_and_fit_checkpoints(multi_dense_model, multi_window, checkpoint_path=f'{cp_shortcut}/dense/')
+history = fit_checkpoints(multi_dense_model, multi_window, checkpoint_path=f'{cp_shortcut}/dense/')
 
 IPython.display.clear_output()
 multi_val_performance['Dense'] = multi_dense_model.evaluate(multi_window.val)
@@ -108,7 +108,7 @@ multi_conv_model = tf.keras.Sequential([
     tf.keras.layers.Reshape([OUT_STEPS, num_features])
 ])
 
-history = compile_and_fit_checkpoints(multi_conv_model, multi_window, checkpoint_path=f'{cp_shortcut}/conv/')
+history = fit_checkpoints(multi_conv_model, multi_window, checkpoint_path=f'{cp_shortcut}/conv/')
 
 IPython.display.clear_output()
 
@@ -126,7 +126,7 @@ multi_lstm_model = tf.keras.Sequential([
     tf.keras.layers.Reshape([OUT_STEPS, num_features])
 ])
 
-history = compile_and_fit_checkpoints(multi_lstm_model, multi_window, checkpoint_path=f'{cp_shortcut}/ltsm/')
+history = fit_checkpoints(multi_lstm_model, multi_window, checkpoint_path=f'{cp_shortcut}/ltsm/')
 
 IPython.display.clear_output()
 

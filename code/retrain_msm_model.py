@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from setup import WindowGenerator, compile, compile_and_fit_checkpoints
+from setup import WindowGenerator, compile, fit_checkpoints
 
 OUT_STEPS=200
 CONV_WIDTH = 3
@@ -46,7 +46,7 @@ def build(model, path_name):
         df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
         window = WindowGenerator(input_width=200, label_width=OUT_STEPS, shift=OUT_STEPS, train_df=train_df, val_df=val_df, test_df=test_df)
-        compile_and_fit_checkpoints(model, window, checkpoint_path=path_name+i+'/cp-{epoch:04d}.ckpt')
+        fit_checkpoints(model, window, checkpoint_path=path_name+i+'/cp-{epoch:04d}.ckpt')
     return model_record
 
 linear = tf.keras.models.load_model('checkpoints/msm/linear/')
