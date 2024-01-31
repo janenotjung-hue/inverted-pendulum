@@ -20,7 +20,7 @@ test cases:
         2. nudged randomly, pendulum stayed upright
     3. model starts normal, gets nudged a few times and turns into regular pendulum 
         1. nudged a few times, fell down but came back up
-        2.nudged a few times, fell down but came back up, stayed down for a longer period of time
+        2. nudged a few times, fell down but came back up, stayed down for a longer period of time
     4. model starts as regular pendulum, no nudges
         1. started with the pendulum close to being horizontal, stayed down
         2. started with pendulum close to vertical
@@ -31,3 +31,4 @@ test cases:
 research questions should have resources that are able to answer them
 write down benchmarks
 control methods?
+write number of times I nudged the pendulum

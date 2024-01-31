@@ -48,7 +48,7 @@ def build(model, window, name):
 dense_untrained = create_ssm_dense_model()
 build(dense_untrained, 'basic', 'Dense Untrained')
 
-dense_cp = tf.train.latest_checkpoint('model_versions/ssm/dense/')
+dense_cp = tf.train.load_checkpoint('model_versions/ssm/dense/')
 dense_trained = create_ssm_dense_model()
 dense_trained.load_weights(dense_cp).expect_partial()
 build(dense_trained, 'basic', 'Dense Trained')
