@@ -7,7 +7,7 @@ import tensorflow as tf
 from setup import WindowGenerator, compile_and_fit_checkpoints, create_ssm_dense_model, create_ssm_conv_model, create_ssm_lstm_model, create_ssm_residual_model
 
 MAX_EPOCHS = 20
-file_array = os.listdir('training_sets_again')
+file_array = os.listdir('training_sets')
 def build(model, window, path_name):
     input_width = 1
     label_width = 1
@@ -20,7 +20,7 @@ def build(model, window, path_name):
             input_width = 10
     for i in range(len(file_array)):
         print(f'Run {i+1}')
-        df = pd.read_csv("training_sets_again/"+file_array[i])
+        df = pd.read_csv("training_sets/"+file_array[i])
 
         time = pd.to_numeric(df.pop('time'))
 
@@ -47,7 +47,7 @@ def build(model, window, path_name):
     return history
 
 dense = create_ssm_dense_model()
-history = build(dense, 'basic', 'model_versions/ssm/dense_test')
+history = build(dense, 'basic', 'model_versions/ssm/dense')
 
 #conv = create_ssm_conv_model()
 #build(conv, 'conv', 'model_versions/ssm/conv')
