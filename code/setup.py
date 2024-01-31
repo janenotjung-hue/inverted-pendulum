@@ -171,16 +171,14 @@ def compile_and_fit_checkpoints(model, window, checkpoint_path):
                                                      monitor="loss",
                                                      save_weights_only=True,
                                                      save_best_only=True,
-                                                     verbose=1,
+                                                     verbose=2,
                                                      save_freq=10*n_batches)
 
-    model.compile(loss=tf.keras.losses.MeanSquaredError(), 
-                  optimizer=tf.keras.optimizers.Adam(), 
-                  metrics=[tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError()])
-    
     history = model.fit(window.train, epochs=MAX_EPOCHS, 
                         validation_data=window.val,
                         callbacks=[cp_callback])
+    
+    model.save_weights(checkpoint_path.format(epoch=0))
     
     return history
 

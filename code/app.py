@@ -45,5 +45,5 @@ def postME():
    r = jsonify(res)
    return r
 if __name__ == "__main__":
-   app.run(debug=True) 
+   app.run(debug=False) 
    

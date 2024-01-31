@@ -27,3 +27,7 @@ test cases:
     5. model starts as regular pendulum, nudged a few times
         1. nudged a few times, stayed down
         2. nudged when it was close to equilibrium, stayed down
+
+research questions should have resources that are able to answer them
+write down benchmarks
+control methods?

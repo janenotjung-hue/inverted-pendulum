@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from setup import WindowGenerator, compile
+from setup import WindowGenerator, compile, create_ssm_dense_model
 import os
 
 class ResidualWrapper(tf.keras.Model):
@@ -49,7 +49,7 @@ df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
 #define training window
 cp_shortcut = 'checkpoints/ssm'
-window = WindowGenerator(input_width=100, label_width=100, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
+window = WindowGenerator(input_width=1, label_width=1, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
 val_performance = {}
 performance = {}
 
@@ -75,14 +75,18 @@ def create_residual_model():
         kernel_initializer=tf.initializers.zeros())]))
    return compile(model)
 
+df = pd.read_csv('training_datasets/testing/output_0.csv')
+time = df.pop('time')
+#spare = df.drop(df.tail((len(df)%10)).index, inplace=True)
+df = df.values.reshape(-1, 1, 4)
 
 dense_untrained = create_dense_model()
 performance['Dense untrained'] = dense_untrained.evaluate(window.test, verbose=2)
 
-dense_cp = tf.train.latest_checkpoint('checkpoints/ssm/dense_2/')
+dense_cp = tf.train.latest_checkpoint('model_versions/ssm/dense_test/')
 dense_trained = create_dense_model()
 dense_trained.load_weights(dense_cp).expect_partial()
-performance['Dense trained'] = dense_trained.evaluate(window.test, verbose=2)
+performance['Dense trained'] = dense_trained.evaluate(df, verbose=2)
 
 lstm_untrained = create_lstm_model()
 performance['LSTM untrained'] = lstm_untrained.evaluate(window.test, verbose=2)

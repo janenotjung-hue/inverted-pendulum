@@ -8,7 +8,6 @@ from setup import WindowGenerator, compile_and_fit_checkpoints, create_ssm_dense
 
 MAX_EPOCHS = 20
 file_array = os.listdir('training_sets_again')
-records = {}
 def build(model, window, path_name):
     input_width = 1
     label_width = 1
@@ -25,18 +24,11 @@ def build(model, window, path_name):
 
         time = pd.to_numeric(df.pop('time'))
 
-        plot_cols = ['theta', 'thetadot', 'x', 'xdot']
-        plot_features = df[plot_cols]
-
-        column_indices = {name: i for i, name in enumerate(df.columns)}
-
         #splitting data by 70% training, 20% validating, 10% testing
         n = len(df)
         train_df = df[0:int(n*0.7)]
         val_df = df[int(n*0.7):int(n*0.9)]
         test_df = df[int(n*0.9):]
-
-        num_features = df.shape[1]
 
         #normalize data: subtract the mean and divide by the standard deviation of each feature.
         train_mean = train_df.mean()
@@ -50,15 +42,18 @@ def build(model, window, path_name):
         df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
         window = WindowGenerator(input_width=input_width, label_width=label_width, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
-        model_record = compile_and_fit_checkpoints(model, window, checkpoint_path=path_name+'/cp-{epoch:04d}.ckpt')
-    model.save(f'{path_name}/model.keras')
-    return model_record
+        checkpoint_path = path_name+'/cp-{epoch:04d}.ckpt'
+        history = compile_and_fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
+    return history
 
-#dense = create_ssm_dense_model()
-#history = build(dense, 'basic', 'model_versions/ssm/dense')
+dense = create_ssm_dense_model()
+history = build(dense, 'basic', 'model_versions/ssm/dense_test')
 
 #conv = create_ssm_conv_model()
 #build(conv, 'conv', 'model_versions/ssm/conv')
 
-lstm = create_ssm_lstm_model()
-build(lstm, 'wide', 'model_versions/ssm/lstm')
+#lstm = create_ssm_lstm_model()
+#build(lstm, 'wide', 'model_versions/ssm/lstm')
+
+#residual = create_ssm_residual_model()
+#build(residual, 'wide', 'model_versions/ssm/residual')
