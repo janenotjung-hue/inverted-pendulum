@@ -42,15 +42,15 @@ def build(model, path_name):
 #linear.load_weights(linear_cp).expect_partial()
 #build(linear, 'model_versions/msm/linear/')
 
-dense_cp = tf.train.latest_checkpoint('model_versions/msm/dense/')
-dense_trained = create_msm_dense_model()
-dense_trained.load_weights(dense_cp).expect_partial()
-build(dense_trained, 'model_versions/msm/dense/')
+#dense_cp = tf.train.latest_checkpoint('model_versions/msm/dense/')
+#dense_trained = create_msm_dense_model()
+#dense_trained.load_weights(dense_cp).expect_partial()
+#build(dense_trained, 'model_versions/msm/dense/')
 #
-#conv_cp = tf.train.latest_checkpoint('model_versions/msm/conv/')
-#conv = create_msm_conv_model()
-#conv.load_weights(conv_cp).expect_partial()
-#build(conv, 'model_versions/msm/conv/')
+conv_cp = tf.train.latest_checkpoint('model_versions/msm/conv/')
+conv = create_msm_conv_model()
+conv.load_weights(conv_cp).expect_partial()
+build(conv, 'model_versions/msm/conv/')
 #
 #lstm_cp = tf.train.latest_checkpoint('model_versions/msm/lstm/')
 #lstm = create_msm_lstm_model()
