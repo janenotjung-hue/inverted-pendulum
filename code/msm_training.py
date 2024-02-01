@@ -40,11 +40,11 @@ def build(model, path_name):
 #linear = create_msm_linear_model()
 #build(linear, 'model_versions/msm/linear')
 
-dense = create_msm_dense_model()
-history = build(dense, 'model_versions/msm/dense')
+#dense = create_msm_dense_model()
+#history = build(dense, 'model_versions/msm/dense')
 
-#conv = create_msm_conv_model()
-#build(conv, 'model_versions/msm/conv')
+conv = create_msm_conv_model()
+build(conv, 'model_versions/msm/conv')
 
 #lstm = create_msm_lstm_model()
 #build(lstm, 'model_versions/msm/lstm')
