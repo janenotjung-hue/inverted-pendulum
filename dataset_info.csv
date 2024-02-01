@@ -1,0 +1,109 @@
+Name,Mean,STD
+output1_1.csv,"theta      -0.073443
+thetadot   -0.075086
+x           0.130022
+xdot       -0.063214
+dtype: float64","theta       1.181079
+thetadot    2.845422
+x           0.449604
+xdot        1.574883
+dtype: float64"
+output1_2.csv,"theta       0.000037
+thetadot   -0.023407
+x           0.011367
+xdot        0.000071
+dtype: float64","theta       0.034159
+thetadot    0.308837
+x           0.055267
+xdot        0.247226
+dtype: float64"
+output1_3.csv,"theta      -0.001985
+thetadot    0.019789
+x          -0.035940
+xdot        0.067752
+dtype: float64","theta       0.063551
+thetadot    0.480309
+x           0.198316
+xdot        0.466355
+dtype: float64"
+output2_1.csv,"theta      -0.016884
+thetadot    0.012868
+x          -0.005391
+xdot        0.149648
+dtype: float64","theta       0.173370
+thetadot    1.022664
+x           0.475547
+xdot        1.168186
+dtype: float64"
+output2_2.csv,"theta       0.020421
+thetadot    0.020619
+x          -0.096567
+xdot       -0.042191
+dtype: float64","theta       0.116500
+thetadot    0.797505
+x           0.327153
+xdot        0.840031
+dtype: float64"
+output3_1.csv,"theta      -0.183761
+thetadot    1.901578
+x           0.053121
+xdot       -0.035109
+dtype: float64","theta       1.411845
+thetadot    3.945048
+x           0.516469
+xdot        3.137844
+dtype: float64"
+output3_2.csv,"theta       0.554301
+thetadot   -2.101548
+x          -0.220228
+xdot        0.026897
+dtype: float64","theta       1.641891
+thetadot    4.323281
+x           0.535072
+xdot        3.097380
+dtype: float64"
+output4_1.csv,"theta      -0.049305
+thetadot    0.321180
+x           0.324144
+xdot        0.080447
+dtype: float64","theta       2.256070
+thetadot    3.885650
+x           0.256162
+xdot        1.055224
+dtype: float64"
+output4_2.csv,"theta       0.116284
+thetadot   -0.029034
+x          -0.054064
+xdot       -0.009401
+dtype: float64","theta       3.035974
+thetadot    0.625524
+x           0.037371
+xdot        0.202622
+dtype: float64"
+output5_1.csv,"theta       0.044381
+thetadot    0.288477
+x           0.093334
+xdot        0.075232
+dtype: float64","theta       2.557186
+thetadot    3.043360
+x           0.459533
+xdot        1.171963
+dtype: float64"
+output5_2.csv,"theta       0.028080
+thetadot   -0.077668
+x          -0.028559
+xdot       -0.049734
+dtype: float64","theta       2.648734
+thetadot    3.042823
+x           0.474645
+xdot        1.638630
+dtype: float64"
+output6.csv,"theta      -0.191397
+thetadot   -1.420026
+x          -0.232112
+xdot       -0.109314
+dtype: float64","theta       1.740708
+thetadot    7.027686
+x           0.498896
+xdot        3.546485
+dtype: float64"
