@@ -30,30 +30,19 @@ def build(model, window, path_name):
         val_df = df[int(n*0.7):int(n*0.9)]
         test_df = df[int(n*0.9):]
 
-        #normalize data: subtract the mean and divide by the standard deviation of each feature.
-        train_mean = train_df.mean()
-        train_std = train_df.std()
-
-        train_df = (train_df - train_mean) / train_std
-        val_df = (val_df - train_mean) / train_std
-        test_df = (test_df - train_mean) / train_std
-
-        df_std = (df - train_mean) / train_std
-        df_std = df_std.melt(var_name='Column', value_name='Normalized')
-
         window = WindowGenerator(input_width=input_width, label_width=label_width, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
         checkpoint_path = path_name+'/cp-{epoch:04d}.ckpt'
         history = fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
     return history
 
 dense = create_ssm_dense_model()
-history = build(dense, 'basic', 'model_versions/ssm/dense')
+build(dense, 'basic', 'model_versions_without_normalizing/ssm/dense')
 
-#conv = create_ssm_conv_model()
-#build(conv, 'conv', 'model_versions/ssm/conv')
+conv = create_ssm_conv_model()
+build(conv, 'conv', 'model_versions_without_normalizing/ssm/conv')
 
-#lstm = create_ssm_lstm_model()
-#build(lstm, 'wide', 'model_versions/ssm/lstm')
+lstm = create_ssm_lstm_model()
+build(lstm, 'wide', 'model_versions_without_normalizing/ssm/lstm')
 
-#residual = create_ssm_residual_model()
-#build(residual, 'wide', 'model_versions/ssm/residual')
+residual = create_ssm_residual_model()
+build(residual, 'wide', 'model_versions_without_normalizing/ssm/residual')

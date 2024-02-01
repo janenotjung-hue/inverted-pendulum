@@ -22,17 +22,6 @@ def build(model, name):
       val_df = df[int(n*0.7):int(n*0.9)]
       test_df = df[int(n*0.9):]
 
-      #normalize data: subtract the mean and divide by the standard deviation of each feature.
-      train_mean = train_df.mean()
-      train_std = train_df.std()
-
-      train_df = (train_df - train_mean) / train_std
-      val_df = (val_df - train_mean) / train_std
-      test_df = (test_df - train_mean) / train_std
-
-      df_std = (df - train_mean) / train_std
-      df_std = df_std.melt(var_name='Column', value_name='Normalized')
-
       window = WindowGenerator(input_width=200, label_width=OUT_STEPS, shift=OUT_STEPS, train_df=train_df, val_df=val_df, test_df=test_df)
       loss, mae, mape = model.evaluate(window.test, verbose=2)
       performance.append([name, i+1, loss, mae, mape])

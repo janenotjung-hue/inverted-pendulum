@@ -29,16 +29,6 @@ def build(model, window, name):
         train_df = df[0:int(n*0.7)]
         val_df = df[int(n*0.7):int(n*0.9)]
         test_df = df[int(n*0.9):]
-        
-        train_mean = train_df.mean()
-        train_std = train_df.std()
-
-        train_df = (train_df - train_mean) / train_std
-        val_df = (val_df - train_mean) / train_std
-        test_df = (test_df - train_mean) / train_std
-
-        df_std = (df - train_mean) / train_std
-        df_std = df_std.melt(var_name='Column', value_name='Normalized')
 
         window = WindowGenerator(input_width=input_width, label_width=label_width, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
         loss, mae, mape = model.evaluate(window.test, verbose=2)

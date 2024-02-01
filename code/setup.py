@@ -169,14 +169,14 @@ def fit_checkpoints(model, window, checkpoint_path):
 
     cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                      monitor="loss",
-                                                     save_weights_only=True,
                                                      save_best_only=True,
                                                      verbose=2,
                                                      save_freq=10*n_batches)
 
     history = model.fit(window.train, epochs=MAX_EPOCHS, 
                         validation_data=window.val,
-                        callbacks=[cp_callback])
+                        callbacks=[cp_callback],
+                        verbose=2)
     
     model.save_weights(checkpoint_path.format(epoch=0))
     
