@@ -52,15 +52,15 @@ def build(model, path_name):
 #conv.load_weights(conv_cp).expect_partial()
 #build(conv, 'model_versions/msm/conv/')
 #
-lstm_cp = tf.train.latest_checkpoint('model_versions/msm/lstm/')
-lstm = create_msm_lstm_model()
-lstm.load_weights(lstm_cp).expect_partial()
-build(lstm, 'model_versions/msm/lstm/')
+#lstm_cp = tf.train.latest_checkpoint('model_versions/msm/lstm/')
+#lstm = create_msm_lstm_model()
+#lstm.load_weights(lstm_cp).expect_partial()
+#build(lstm, 'model_versions/msm/lstm/')
 
-#feedback_cp = tf.train.latest_checkpoint('model_versions/msm/feedback/')
-#feedback = create_msm_feedback_model()
-#feedback.load_weights(feedback_cp).expect_partial()
-#build(feedback, 'model_versions/msm/feedback/')
+feedback_cp = tf.train.latest_checkpoint('model_versions/msm/feedback/')
+feedback = create_msm_feedback_model()
+feedback.load_weights(feedback_cp).expect_partial()
+build(feedback, 'model_versions/msm/feedback/')
 
 #linear = create_msm_linear_model()
 #build(linear, 'model_versions/msm/linear')
