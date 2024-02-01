@@ -46,22 +46,22 @@ def build(model, window, path_name):
         history = fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
     return history
 
-dense_cp = tf.train.load_checkpoint('model_versions/ssm/dense/')
+dense_cp = tf.train.latest_checkpoint('model_versions/ssm/dense/')
 dense_trained = create_ssm_dense_model()
 dense_trained.load_weights(dense_cp).expect_partial()
 build(dense_trained, 'basic', 'model_versions/ssm/dense')
 
-conv_cp = tf.train.load_checkpoint('model_versions/ssm/conv/')
+conv_cp = tf.train.latest_checkpoint('model_versions/ssm/conv/')
 conv_trained = create_ssm_conv_model()
 conv_trained.load_weights(conv_cp).expect_partial()
 build(conv_trained, 'conv', 'model_versions/ssm/conv/')
 
-lstm_cp = tf.train.load_checkpoint('model_versions/ssm/lstm/')
+lstm_cp = tf.train.latest_checkpoint('model_versions/ssm/lstm/')
 lstm_trained = create_ssm_lstm_model()
 lstm_trained.load_weights(lstm_cp).expect_partial()
 build(lstm_trained, 'wide', 'model_versions/ssm/lstm/')
 
-residual_cp = tf.train.load_checkpoint('model_versions/ssm/residual/')
+residual_cp = tf.train.latest_checkpoint('model_versions/ssm/residual/')
 residual_trained = create_ssm_residual_model()
 residual_trained.load_weights(residual_cp).expect_partial()
 build(residual_trained, 'wide', 'model_versions/ssm/residual/')
