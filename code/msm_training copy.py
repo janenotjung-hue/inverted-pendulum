@@ -47,15 +47,15 @@ def build(model, path_name):
 #dense_trained.load_weights(dense_cp).expect_partial()
 #build(dense_trained, 'model_versions/msm/dense/')
 #
-conv_cp = tf.train.latest_checkpoint('model_versions/msm/conv/')
-conv = create_msm_conv_model()
-conv.load_weights(conv_cp).expect_partial()
-build(conv, 'model_versions/msm/conv/')
+#conv_cp = tf.train.latest_checkpoint('model_versions/msm/conv/')
+#conv = create_msm_conv_model()
+#conv.load_weights(conv_cp).expect_partial()
+#build(conv, 'model_versions/msm/conv/')
 #
-#lstm_cp = tf.train.latest_checkpoint('model_versions/msm/lstm/')
-#lstm = create_msm_lstm_model()
-#lstm.load_weights(lstm_cp).expect_partial()
-#build(lstm, 'model_versions/msm/lstm/')
+lstm_cp = tf.train.latest_checkpoint('model_versions/msm/lstm/')
+lstm = create_msm_lstm_model()
+lstm.load_weights(lstm_cp).expect_partial()
+build(lstm, 'model_versions/msm/lstm/')
 
 #feedback_cp = tf.train.latest_checkpoint('model_versions/msm/feedback/')
 #feedback = create_msm_feedback_model()
