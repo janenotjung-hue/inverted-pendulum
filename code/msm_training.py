@@ -37,17 +37,17 @@ def build(model, path_name):
         history = fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
     return history
 
-"""linear = create_msm_linear_model()
-build(linear, 'model_versions/msm/linear')
+#linear = create_msm_linear_model()
+#build(linear, 'model_versions/msm/linear')
 
 dense = create_msm_dense_model()
 history = build(dense, 'model_versions/msm/dense')
 
-conv = create_msm_conv_model()
-build(conv, 'model_versions/msm/conv')
+#conv = create_msm_conv_model()
+#build(conv, 'model_versions/msm/conv')
 
-lstm = create_msm_lstm_model()
-build(lstm, 'model_versions/msm/lstm')"""
+#lstm = create_msm_lstm_model()
+#build(lstm, 'model_versions/msm/lstm')
 
-feedback = create_msm_feedback_model()
-build(feedback, 'model_versions/msm/feedback')
+#feedback = create_msm_feedback_model()
+#build(feedback, 'model_versions/msm/feedback')
