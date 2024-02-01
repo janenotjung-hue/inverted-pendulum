@@ -27,16 +27,16 @@ def build(model, path_name):
     return history
 
 linear = create_msm_linear_model()
-build(linear, 'model_versions/msm/linear')
+build(linear, 'model_versions_without_normalizing/msm/linear')
 
 dense = create_msm_dense_model()
-history = build(dense, 'model_versions/msm/dense')
+history = build(dense, 'model_versions_without_normalizing/msm/dense')
 
 conv = create_msm_conv_model()
-build(conv, 'model_versions/msm/conv')
+build(conv, 'model_versions_without_normalizing/msm/conv')
 
 lstm = create_msm_lstm_model()
-build(lstm, 'model_versions/msm/lstm')
+build(lstm, 'model_versions_without_normalizing/msm/lstm')
 
 feedback = create_msm_feedback_model()
-build(feedback, 'model_versions/msm/feedback')
+build(feedback, 'model_versions_without_normalizing/msm/feedback')
