@@ -373,6 +373,7 @@ function toggleController() {
 
 function nudge() {
     // give an impulse to theta
+    console.log('time: ' + t)
     const randomValue = (Math.random() - 0.5) / 2;
     thetadot += (randomValue + Math.sign(randomValue)) / l;
 }

@@ -25,8 +25,9 @@ test cases:
         1. started with the pendulum close to being horizontal, stayed down
         2. started with pendulum close to vertical
     5. model starts as regular pendulum, nudged a few times
-        1. nudged a few times, stayed down
-        2. nudged when it was close to equilibrium, stayed down
+        1. started with pendulum close to being horizontal, nudged a few times, stayed down
+        2. started with pendulum close to being vertical, nudged few times, stayed down
+    6. nudging pendulum constantly to get model used to it
 
 research questions should have resources that are able to answer them
 write down benchmarks
