@@ -37,15 +37,15 @@ def build(model, path_name):
         history = fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
     return history
 
-linear_cp = tf.train.latest_checkpoint('model_versions/msm/linear/')
-linear = create_msm_linear_model()
-linear.load_weights(linear_cp).expect_partial()
-build(linear, 'model_versions/msm/linear/')
+#linear_cp = tf.train.latest_checkpoint('model_versions/msm/linear/')
+#linear = create_msm_linear_model()
+#linear.load_weights(linear_cp).expect_partial()
+#build(linear, 'model_versions/msm/linear/')
 
-#dense_cp = tf.train.latest_checkpoint('model_versions/msm/dense/')
-#dense_trained = create_msm_dense_model()
-#dense_trained.load_weights(dense_cp).expect_partial()
-#build(dense_trained, 'model_versions/msm/dense/')
+dense_cp = tf.train.latest_checkpoint('model_versions/msm/dense/')
+dense_trained = create_msm_dense_model()
+dense_trained.load_weights(dense_cp).expect_partial()
+build(dense_trained, 'model_versions/msm/dense/')
 #
 #conv_cp = tf.train.latest_checkpoint('model_versions/msm/conv/')
 #conv = create_msm_conv_model()
@@ -71,8 +71,8 @@ build(linear, 'model_versions/msm/linear/')
 #conv = create_msm_conv_model()
 #build(conv, 'model_versions/msm/conv')
 
-lstm = create_msm_lstm_model()
-build(lstm, 'model_versions/msm/lstm')
+#lstm = create_msm_lstm_model()
+#build(lstm, 'model_versions/msm/lstm')
 
 #feedback = create_msm_feedback_model()
 #build(feedback, 'model_versions/msm/feedback')
