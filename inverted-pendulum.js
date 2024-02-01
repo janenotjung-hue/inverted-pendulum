@@ -361,7 +361,7 @@ let loop = false;
 const pendulumLog = [];
 
 function updateLog() {
-    if(loop) {
+    if (loop) {
         pendulumLog.push({ time: t, theta: theta, thetadot: thetadot, x: x, xdot: xdot });
     }
 }
@@ -373,6 +373,7 @@ function toggleController() {
 
 function nudge() {
     // give an impulse to theta
+    console.log('time: ' + t)
     const randomValue = (Math.random() - 0.5) / 2;
     thetadot += (randomValue + Math.sign(randomValue)) / l;
 }
@@ -405,10 +406,10 @@ function save() {
     const titleKeys = Object.keys(pendulumLog[0]);
     const refinedData = [];
     refinedData.push(titleKeys);
-    pendulumLog.forEach(item => {refinedData.push(Object.values(item))});
+    pendulumLog.forEach(item => { refinedData.push(Object.values(item)) });
 
     let csvContent = '';
-    refinedData.forEach(row => {csvContent += row.join(',')+'\n'});
+    refinedData.forEach(row => { csvContent += row.join(',') + '\n' });
     downloadCSVFile(csvContent);
 }
 
@@ -429,6 +430,32 @@ function downloadCSVFile(csv_data) {
 
     temp_link.click();
     document.body.removeChild(temp_link);
+}
+
+async function loadPrediction() {
+    var values = pendulumLog;
+
+    fetch("http://127.0.0.1:5000/receiver",
+        {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+
+            body: JSON.stringify(values)
+        }).then(res => {
+            if (res.ok) {
+                return res.json()
+            } else {
+                alert("something is wrong")
+            }
+        }).then(jsonResponse => {
+            console.log('last values: '+ Object.entries(pendulumLog[pendulumLog.length-1]))
+            console.log(theta, thetadot, x, xdot)
+            console.log(jsonResponse)
+        }
+        ).catch((err) => console.error(err));
 }
 
 // vector operations
@@ -528,11 +555,11 @@ function updateGraphics() {
 }
 
 function mainloop(millis, lastMillis) {
-    
+
     dt = (millis - lastMillis) / 1000 / stepsPerFrame;
 
     // do the physics step as many times as needed 
-    if(loop) {for (var s = 0; s < stepsPerFrame; ++s) updateCoordinates()};
+    if (loop) { for (var s = 0; s < stepsPerFrame; ++s) updateCoordinates() };
     // update the graphics
     updateGraphics();
 
@@ -606,15 +633,16 @@ const nudgeButton = document.getElementById("nudge");
 const resetButton = document.getElementById("reset");
 const printButton = document.getElementById("print");
 const saveButton = document.getElementById("save");
+const testButton = document.getElementById("test")
 //const controllerButton = document.getElementById("toggle-controller");
 
 // link buttons to callbacks
 startButton.onpointerdown = start;
 stopButton.onpointerdown = stop;
-//controllerButton.onpointerdown = toggleController;
 nudgeButton.onpointerdown = nudge;
 resetButton.onpointerdown = reset;
 printButton.onpointerdown = print;
 saveButton.onpointerdown = save;
+testButton.onpointerdown = loadPrediction;
 
-mainloop(0,0);
+mainloop(0, 0);

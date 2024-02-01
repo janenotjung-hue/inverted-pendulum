@@ -9,3 +9,27 @@ xddot = cart acceleration
 
 Input to the AI model = return value from the controller (which uses 4 const variables and 4 state variables)
 Output from the AI model = 4 variables (theta, x, thetadot, xdot)
+
+test cases:
+    1. model starts normal, balances itself over time 
+        1. pendulum swung down, then came back up then balanced
+        2. pendulum stayed upright
+        3. pendulum stayed upright
+    2. model starts normal, gets nudged a few times but stays upright
+        1. nudged at relatively normal intervals, pendulum stayed upright
+        2. nudged randomly, pendulum stayed upright
+    3. model starts normal, gets nudged a few times and turns into regular pendulum 
+        1. nudged a few times, fell down but came back up
+        2. nudged a few times, fell down but came back up, stayed down for a longer period of time
+    4. model starts as regular pendulum, no nudges
+        1. started with the pendulum close to being horizontal, stayed down
+        2. started with pendulum close to vertical
+    5. model starts as regular pendulum, nudged a few times
+        1. started with pendulum close to being horizontal, nudged a few times, stayed down
+        2. started with pendulum close to being vertical, nudged few times, stayed down
+    6. nudging pendulum constantly to get model used to it
+
+research questions should have resources that are able to answer them
+write down benchmarks
+control methods?
+write number of times I nudged the pendulum
