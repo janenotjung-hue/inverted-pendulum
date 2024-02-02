@@ -22,21 +22,23 @@ def build(model, path_name):
         test_df = df[int(n*0.9):]
 
         window = WindowGenerator(input_width=200, label_width=OUT_STEPS, shift=OUT_STEPS, train_df=train_df, val_df=val_df, test_df=test_df)
-        checkpoint_path = ('%s/cp-%d-{epoch:02d}-{loss:.4f}.keras' % (path_name, i))
+        checkpoint_path = ('%s/cp-{epoch:02d}-{loss:.4f}.keras' % (path_name))
+        # !! record history into a csv to check loss and val_loss !!
         history = fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
+    model.save(f'{path_name}/model.keras')
     return history
 
 linear = create_msm_linear_model()
-build(linear, 'model_versions_without_normalizing/msm/linear')
+build(linear, 'model_versions_new_format/msm/linear')
 
 dense = create_msm_dense_model()
-history = build(dense, 'model_versions_without_normalizing/msm/dense')
+history = build(dense, 'model_versions_new_format/msm/dense')
 
 conv = create_msm_conv_model()
-build(conv, 'model_versions_without_normalizing/msm/conv')
+build(conv, 'model_versions_new_format/msm/conv')
 
 lstm = create_msm_lstm_model()
-build(lstm, 'model_versions_without_normalizing/msm/lstm')
+build(lstm, 'model_versions_new_format/msm/lstm')
 
 feedback = create_msm_feedback_model()
-build(feedback, 'model_versions_without_normalizing/msm/feedback')
+build(feedback, 'model_versions_new_format/msm/feedback')
