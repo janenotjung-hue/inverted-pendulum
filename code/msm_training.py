@@ -22,7 +22,7 @@ def build(model, path_name):
         test_df = df[int(n*0.9):]
 
         window = WindowGenerator(input_width=200, label_width=OUT_STEPS, shift=OUT_STEPS, train_df=train_df, val_df=val_df, test_df=test_df)
-        checkpoint_path = path_name+'/cp-{epoch:04d}.ckpt'
+        checkpoint_path = ('%s/cp-%d-{epoch:02d}-{loss:.4f}.keras' % (path_name, i))
         history = fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
     return history
 
