@@ -30,8 +30,10 @@ def build(model, window, path_name):
         test_df = df[int(n*0.9):]
 
         window = WindowGenerator(input_width=input_width, label_width=label_width, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
-        checkpoint_path = ('%s/cp-%d-{epoch:02d}-{loss:.4f}.keras' % (path_name, i))
+        checkpoint_path = ('%s/cp-{epoch:02d}-{loss:.4f}.keras' % (path_name))
+        # !! record history into a csv to check loss and val_loss !!
         history = fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
+    model.save(f'{path_name}/model.keras')
     return history
 
 dense = create_ssm_dense_model()
