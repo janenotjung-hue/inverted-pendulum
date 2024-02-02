@@ -39,11 +39,11 @@ def build(model, window, path_name):
 dense = create_ssm_dense_model()
 build(dense, 'basic', 'model_versions_new_format/ssm/dense')
 
-#conv = create_ssm_conv_model()
-#build(conv, 'conv', 'model_versions_without_normalizing/ssm/conv')
-#
-#lstm = create_ssm_lstm_model()
-#build(lstm, 'wide', 'model_versions_without_normalizing/ssm/lstm')
-#
-#residual = create_ssm_residual_model()
-#build(residual, 'wide', 'model_versions_without_normalizing/ssm/residual')
+conv = create_ssm_conv_model()
+build(conv, 'conv', 'model_versions_new_format/ssm/conv')
+
+lstm = create_ssm_lstm_model()
+build(lstm, 'wide', 'model_versions_new_format/ssm/lstm')
+
+residual = create_ssm_residual_model()
+build(residual, 'wide', 'model_versions_new_format/ssm/residual')
