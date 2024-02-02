@@ -167,19 +167,19 @@ def fit_checkpoints(model, window, checkpoint_path):
     n_batches = len(window.train) / batch_size
     n_batches = math.ceil(n_batches) 
 
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+    cp_callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
+                                                      patience=2, 
+                                                      mode='min'),
+                    tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                      monitor="loss",
                                                      save_best_only=True,
                                                      verbose=2,
-                                                     save_freq=10*n_batches)
+                                                     save_freq=10*n_batches)]
 
     history = model.fit(window.train, epochs=MAX_EPOCHS, 
                         validation_data=window.val,
-                        callbacks=[cp_callback],
+                        callbacks=cp_callbacks,
                         verbose=2)
-    
-    model.save_weights(checkpoint_path.format(epoch=0))
-    
     return history
 
 #SSM Models
