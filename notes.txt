@@ -29,6 +29,31 @@ test cases:
         2. started with pendulum close to being vertical, nudged few times, stayed down
     6. nudging pendulum constantly to get model used to it
 
+test cases 2:
+    1. pendulum starts upright, untouched (get from previous set)
+        1. pendulum swung down, didn't come back up
+        2. pendulum stayed upright
+        3. pendulum stayed upright
+    2. pendulum starts upright, gets nudged but stays upright
+        1. nudged at 5s
+        2. nudged at 2, 4, 6, 8s 
+        3. nudged every 1s
+        4. nudged randomly (see onenote)
+    3. pendulum starts upright, gets nudged AND falls down, could either be due to nudge or independent
+        1. nudged at 5s (comes back up)
+        2. nudged at 2, 4, 6, 8s (comes back up)
+        3. nudged every 1s (comes back up)
+        4. nudged randomly (comes back up)
+    4. pendulum starts with pendulum fallen, no nudges
+        1. started with pendulum close to horizontal
+        2. started with pendulum close to vertical
+        3. started with pendulum close to horizontal again, swung around but stayed down
+    5. model starts with pendulum fallen, gets nudged 
+        1. nudged at 5s (stays down)
+        2. nudged at 2, 4, 6, 8s (stays down)
+        3. nudged every 1s (stays down)
+        4. nudged randomly 
+
 research questions should have resources that are able to answer them
 write down benchmarks
 control methods?

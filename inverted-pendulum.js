@@ -451,7 +451,7 @@ async function loadPrediction() {
                 alert("something is wrong")
             }
         }).then(jsonResponse => {
-            console.log('last values: '+ Object.entries(pendulumLog[pendulumLog.length-1]))
+            console.log('last values: ' + Object.entries(pendulumLog[pendulumLog.length - 1]))
             console.log(theta, thetadot, x, xdot)
             console.log(jsonResponse)
         }
@@ -553,18 +553,19 @@ function updateGraphics() {
     topCircleTranslate = sliderTranslate + `translateX( ${100 * l * Math.sin(theta)}px ) translateY( ${-100 * l * Math.cos(theta)}px )`
     topCircleElements.forEach(elm => elm.style.transform = topCircleTranslate);
 }
-
+nudgeInterval = 0.0;
 function mainloop(millis, lastMillis) {
+    if (t >= 10.0 && loop == true) { stop(); console.log(t) } else {
+        dt = (millis - lastMillis) / 1000 / stepsPerFrame;
 
-    dt = (millis - lastMillis) / 1000 / stepsPerFrame;
+        // do the physics step as many times as needed 
+        if (loop) { for (var s = 0; s < stepsPerFrame; ++s) updateCoordinates() };
+        // update the graphics
+        updateGraphics();
 
-    // do the physics step as many times as needed 
-    if (loop) { for (var s = 0; s < stepsPerFrame; ++s) updateCoordinates() };
-    // update the graphics
-    updateGraphics();
-
-    // call this again after 1 frame
-    requestAnimationFrame(newMillis => mainloop(newMillis, millis));
+        // call this again after 1 frame
+        requestAnimationFrame(newMillis => mainloop(newMillis, millis));
+    }
 }
 
 // ---------- end of simulation code ----------
