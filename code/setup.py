@@ -184,13 +184,28 @@ def fit_checkpoints(model, window, checkpoint_path):
 
 #SSM Models
 class ResidualWrapper(tf.keras.Model):
-  def __init__(self, model):
-    super().__init__()
-    self.model = model
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
 
-  def call(self, inputs, *args, **kwargs):
-    delta = self.model(inputs, *args, **kwargs)
-    return inputs + delta
+    def call(self, inputs, *args, **kwargs):
+        delta = self.model(inputs, *args, **kwargs)
+        return inputs + delta
+
+    def get_config(self):
+        config = super().get_config()
+        config.update(
+            {
+                "model": self.model,
+            }
+        )
+        return config
+    
+    @classmethod
+    def from_config(cls, config):
+        # Note that you can also use [`keras.saving.deserialize_keras_object`](/api/models/model_saving_apis/serialization_utils#deserializekerasobject-function) here
+        config["model"] = tf.keras.layers.deserialize(config["model"])
+        return cls(**config)
 
 def create_ssm_dense_model():
     model = tf.keras.Sequential([
@@ -284,6 +299,23 @@ class FeedBack(tf.keras.Model):
         # Also wrap the LSTMCell in an RNN to simplify the `warmup` method.
         self.lstm_rnn = tf.keras.layers.RNN(self.lstm_cell, return_state=True)
         self.dense = tf.keras.layers.Dense(num_features)
+        
+    def get_config(self):
+        config = super().get_config()
+        config.update(
+            {
+                "units": self.units,
+                "out_steps": self.out_steps
+            }
+        )
+        return config
+    
+    @classmethod
+    def from_config(cls, config):
+        # Note that you can also use [`keras.saving.deserialize_keras_object`](/api/models/model_saving_apis/serialization_utils#deserializekerasobject-function) here
+        config["units"] = tf.keras.layers.deserialize(config["units"])
+        config["out_steps"] = tf.keras.layers.deserialize(config["out_steps"])
+        return cls(**config)
 
 def warmup(self, inputs):
     # inputs.shape => (batch, time, features)
