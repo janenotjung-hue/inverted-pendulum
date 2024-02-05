@@ -7,17 +7,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@500&display=swap" rel="stylesheet">
     <link href="inverted-pendulum.css" rel="stylesheet">
     <script type="text/javascript" src="smoothie.js"></script>
-    <script type="text/javascript" src="plot.js"></script>
 </head>
 
-<body onload="createPlots()">
+<body onload="init()">
 
     <div id="background">
 
         <div id="container">
 
             <h1 id="title"> inverted pendulum </h1>
-
+            <div>
+                <p>Theta: </p><p id="thetaText"></p>
+                <p>Thetadot: </p><p id="thetaDotText"></p>
+                <p>X: </p><p id="xText"></p>
+                <p>Xdot: </p><p id="xDotText"></p>
+            </div>
+        </br>
             <div id="upper-sliders">
 
                 <p class="left"> gravitational acceleration </p>
@@ -84,22 +89,6 @@
             </div>
             <div>
                 <canvas id="mycanvas" width="500" height="100"></canvas>
-                <script type="text/javascript">
-                    var smoothie = new SmoothieChart();
-                    smoothie.streamTo(document.getElementById("mycanvas"));
-                    var line1 = new TimeSeries();
-                    var line2 = new TimeSeries();
-            
-                    // Add a random value to each line every second
-                    setInterval(function () {
-                        line1.append(Date.now(), Math.random());
-                        line2.append(Date.now(), Math.random());
-                    }, 1000);
-            
-                    // Add to SmoothieChart
-                    smoothie.addTimeSeries(line1);
-                    smoothie.addTimeSeries(line2);
-                </script>
             </div>
             <p style="margin-top: 2rem; font-size: 1rem;"> this is a simulation of an inverted pendulum with a PD
                 controller to bring the pendulum angle θ and silder displacement x to zero. it uses RK4 numerical
@@ -189,6 +178,8 @@
 
         </div>
     </div>
+    <script type="text/javascript" src="inverted-pendulum.js"> </script>
+    <script type="text/javascript" src="server-load.js"></script>
 </body>
 
 </html>

@@ -544,7 +544,6 @@ function updateCoordinates() {
 }
 
 function updateGraphics() {
-
     // translate all the slider elements by sliderX
     sliderTranslate = `translateX( ${100 * x}px )`
     sliderElements.forEach(elm => elm.style.transform = sliderTranslate);
@@ -557,10 +556,15 @@ function updateGraphics() {
     topCircleTranslate = sliderTranslate + `translateX( ${100 * l * Math.sin(theta)}px ) translateY( ${-100 * l * Math.cos(theta)}px )`
     topCircleElements.forEach(elm => elm.style.transform = topCircleTranslate);
 }
+
 var nudgeInterval = 0.0;
 function mainloop(millis, lastMillis) {
     dt = (millis - lastMillis) / 1000 / stepsPerFrame;
 
+    document.getElementById("thetaText").innerHTML = theta;
+    //document.getElementById("thetaDotText").innerHTML = thetadot;
+    //document.getElementById("xText").innerHTML = x;
+    //document.getElementById("xDotText").innerHTML = xdot;
     // do the physics step as many times as needed 
     if (loop) { for (var s = 0; s < stepsPerFrame; ++s) updateCoordinates() };
     // update the graphics

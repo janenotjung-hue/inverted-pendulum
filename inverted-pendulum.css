@@ -265,3 +265,12 @@ input[type=range]::-moz-range-track {
     border-radius: 0.5rem;
     box-shadow: none;
 }
+div.smoothie-chart-tooltip {
+    background: #444;
+    padding: 1em;
+    margin-top: 20px;
+    font-family: Consolas, monospace;
+    color: white;
+    font-size: 10px;
+    pointer-events: none;
+  }
