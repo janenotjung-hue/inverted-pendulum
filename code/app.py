@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
-model = tf.keras.models.load_model('model_versions_without_normalizing/ssm/dense/cp-0020.ckpt/')
+model = tf.keras.models.load_model('model_versions_new_format/ssm/dense/model.keras')
 
 def format_to_array(data, range): 
    df = pd.DataFrame(data, columns=['time', 'theta', 'thetadot', 'x', 'xdot'])
@@ -17,7 +17,7 @@ def get_prediction(data):
    df = format_to_array(data, 1)
    df = df.values.reshape(-1, 1, 4)
    history = model.predict(df)
-   res = history[0].tolist()
+   res = history[0][0].tolist()
    return res
 
 def get_conv_prediction(data):

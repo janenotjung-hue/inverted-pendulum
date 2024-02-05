@@ -1,5 +1,4 @@
 // Oscar Saharoy 2021
-
 // rewrite me!!!!
 function controller() {
 
@@ -358,6 +357,7 @@ function pointerToPendulumSpace(evt) {
 
 // ---------- simulation code ----------
 let loop = false;
+let testLoop = false;
 const pendulumLog = [];
 
 function updateLog() {
@@ -391,6 +391,7 @@ function stop() {
     console.log(pendulumLog.length);
     xSlider.slider.removeAttribute('disabled');
     thetaSlider.slider.removeAttribute('disabled');
+    testLoop=false;
     loop = false;
 }
 
@@ -399,6 +400,10 @@ function print() {
     for (i = 0; i < pendulumLog.length; i++) {
         console.log(pendulumLog[i]);
     }
+}
+
+function togglePrediction() {
+    testLoop != testLoop
 }
 
 function save() {
@@ -451,8 +456,6 @@ async function loadPrediction() {
                 alert("something is wrong")
             }
         }).then(jsonResponse => {
-            console.log('last values: ' + Object.entries(pendulumLog[pendulumLog.length - 1]))
-            console.log(theta, thetadot, x, xdot)
             console.log(jsonResponse)
         }
         ).catch((err) => console.error(err));
@@ -508,6 +511,7 @@ function stateDot(state) {
 
 
 function updateCoordinates() {
+    if(testLoop) {loadPrediction()}
     // increment time
     t += dt;
 
@@ -555,17 +559,15 @@ function updateGraphics() {
 }
 nudgeInterval = 0.0;
 function mainloop(millis, lastMillis) {
-    if (t >= 10.0 && loop == true) { stop(); console.log(t) } else {
-        dt = (millis - lastMillis) / 1000 / stepsPerFrame;
+    dt = (millis - lastMillis) / 1000 / stepsPerFrame;
 
-        // do the physics step as many times as needed 
-        if (loop) { for (var s = 0; s < stepsPerFrame; ++s) updateCoordinates() };
-        // update the graphics
-        updateGraphics();
+    // do the physics step as many times as needed 
+    if (loop) { for (var s = 0; s < stepsPerFrame; ++s) updateCoordinates() };
+    // update the graphics
+    updateGraphics();
 
-        // call this again after 1 frame
-        requestAnimationFrame(newMillis => mainloop(newMillis, millis));
-    }
+    // call this again after 1 frame
+    requestAnimationFrame(newMillis => mainloop(newMillis, millis));
 }
 
 // ---------- end of simulation code ----------
@@ -644,6 +646,6 @@ nudgeButton.onpointerdown = nudge;
 resetButton.onpointerdown = reset;
 printButton.onpointerdown = print;
 saveButton.onpointerdown = save;
-testButton.onpointerdown = loadPrediction;
+testButton.onpointerdown = togglePrediction;
 
 mainloop(0, 0);

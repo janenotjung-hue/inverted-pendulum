@@ -78,7 +78,9 @@
                 <input id="dx-slider" type="range" class="middle" min="-200" max="200" value="10" step="1"> </input>
                 <input id="dx-input" type="number" class="right number" step="1" value="10"> </input>
             </div>
-
+            <div>
+                <canvas id="mycanvas" width="400" height="100"></canvas>
+            </div>
             <p style="margin-top: 2rem; font-size: 1rem;"> this is a simulation of an inverted pendulum with a PD
                 controller to bring the pendulum angle θ and silder displacement x to zero. it uses RK4 numerical
                 integration and the controller function at the top of the JS code can be easily modified to test new
