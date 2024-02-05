@@ -6,9 +6,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@500&display=swap" rel="stylesheet">
     <link href="inverted-pendulum.css" rel="stylesheet">
+    <script type="text/javascript" src="smoothie.js"></script>
+    <script type="text/javascript" src="plot.js"></script>
 </head>
 
-<body>
+<body onload="createPlots()">
 
     <div id="background">
 
@@ -44,8 +46,10 @@
                 <input id="x-input" type="number" class="right number" min="-1" max="1" step="0.1" value="0"> </input>
 
                 <p class="left"> pendulum angle </p>
-                <input id="theta-slider" class="middle" type="range" min="-3.6" max="3.6" value="0.1" step="0.001"> </input>
-                <input id="theta-input" type="number" class="right number" min="-3.6" max="3.6" step="0.01" value="0.001"> </input>
+                <input id="theta-slider" class="middle" type="range" min="-3.6" max="3.6" value="0.1" step="0.001">
+                </input>
+                <input id="theta-input" type="number" class="right number" min="-3.6" max="3.6" step="0.01"
+                    value="0.001"> </input>
             </div>
 
             <div id="buttons">
@@ -79,7 +83,23 @@
                 <input id="dx-input" type="number" class="right number" step="1" value="10"> </input>
             </div>
             <div>
-                <canvas id="mycanvas" width="400" height="100"></canvas>
+                <canvas id="mycanvas" width="500" height="100"></canvas>
+                <script type="text/javascript">
+                    var smoothie = new SmoothieChart();
+                    smoothie.streamTo(document.getElementById("mycanvas"));
+                    var line1 = new TimeSeries();
+                    var line2 = new TimeSeries();
+            
+                    // Add a random value to each line every second
+                    setInterval(function () {
+                        line1.append(Date.now(), Math.random());
+                        line2.append(Date.now(), Math.random());
+                    }, 1000);
+            
+                    // Add to SmoothieChart
+                    smoothie.addTimeSeries(line1);
+                    smoothie.addTimeSeries(line2);
+                </script>
             </div>
             <p style="margin-top: 2rem; font-size: 1rem;"> this is a simulation of an inverted pendulum with a PD
                 controller to bring the pendulum angle θ and silder displacement x to zero. it uses RK4 numerical
@@ -169,9 +189,6 @@
 
         </div>
     </div>
-
-    <script type="text/javascript" src="inverted-pendulum.js"> </script>
-
 </body>
 
 </html>

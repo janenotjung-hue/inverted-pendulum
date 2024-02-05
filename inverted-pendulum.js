@@ -391,7 +391,7 @@ function stop() {
     console.log(pendulumLog.length);
     xSlider.slider.removeAttribute('disabled');
     thetaSlider.slider.removeAttribute('disabled');
-    testLoop=false;
+    testLoop = false;
     loop = false;
 }
 
@@ -511,7 +511,7 @@ function stateDot(state) {
 
 
 function updateCoordinates() {
-    if(testLoop) {loadPrediction()}
+    if (testLoop) { loadPrediction() }
     // increment time
     t += dt;
 
@@ -557,7 +557,7 @@ function updateGraphics() {
     topCircleTranslate = sliderTranslate + `translateX( ${100 * l * Math.sin(theta)}px ) translateY( ${-100 * l * Math.cos(theta)}px )`
     topCircleElements.forEach(elm => elm.style.transform = topCircleTranslate);
 }
-nudgeInterval = 0.0;
+var nudgeInterval = 0.0;
 function mainloop(millis, lastMillis) {
     dt = (millis - lastMillis) / 1000 / stepsPerFrame;
 
@@ -569,7 +569,6 @@ function mainloop(millis, lastMillis) {
     // call this again after 1 frame
     requestAnimationFrame(newMillis => mainloop(newMillis, millis));
 }
-
 // ---------- end of simulation code ----------
 
 // number of physics steps per frame
