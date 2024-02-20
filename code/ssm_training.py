@@ -6,7 +6,7 @@ import pandas as pd
 import tensorflow as tf
 from setup import WindowGenerator, fit_checkpoints, create_ssm_dense_model, create_ssm_conv_model, create_ssm_lstm_model, create_ssm_residual_model
 
-file_array = os.listdir('training_sets')
+file_array = os.listdir('training_sets_nudge')
 def build(model, window, path_name):
     input_width = 1
     label_width = 1
@@ -19,7 +19,7 @@ def build(model, window, path_name):
             input_width = 10
     for i in range(len(file_array)):
         print(f'Run {i+1}')
-        df = pd.read_csv("training_sets/"+file_array[i])
+        df = pd.read_csv("training_sets_nudge/"+file_array[i])
 
         time = df.pop('time')
 
@@ -31,19 +31,18 @@ def build(model, window, path_name):
 
         window = WindowGenerator(input_width=input_width, label_width=label_width, shift=1, train_df=train_df, val_df=val_df, test_df=test_df)
         checkpoint_path = ('%s/cp-{epoch:02d}-{loss:.4f}.keras' % (path_name))
-        # !! record history into a csv to check loss and val_loss !!
         history = fit_checkpoints(model, window, checkpoint_path=checkpoint_path)
     model.save(f'{path_name}/model.keras')
     return history
 
-#dense = create_ssm_dense_model()
-#build(dense, 'basic', 'model_versions_new_format/ssm/dense')
+dense = create_ssm_dense_model()
+build(dense, 'basic', 'model_versions_nudging/ssm/dense')
 #
-#conv = create_ssm_conv_model()
-#build(conv, 'conv', 'model_versions_new_format/ssm/conv')
+conv = create_ssm_conv_model()
+build(conv, 'conv', 'model_versions_nudging/ssm/conv')
 #
-#lstm = create_ssm_lstm_model()
-#build(lstm, 'wide', 'model_versions_new_format/ssm/lstm')
+lstm = create_ssm_lstm_model()
+build(lstm, 'wide', 'model_versions_nudging/ssm/lstm')
 
 residual = create_ssm_residual_model()
-build(residual, 'wide', 'model_versions_new_format/ssm/residual')
+build(residual, 'wide', 'model_versions_nudging/ssm/residual')
