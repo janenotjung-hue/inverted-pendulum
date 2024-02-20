@@ -37,31 +37,33 @@ def build(model, window, name):
         performance.append([name, i+1, loss, mae, mape])
         
 
-dense_untrained = create_ssm_dense_model()
-build(dense_untrained, 'basic', 'Dense Untrained')
-
-dense_cp = load_model('model_versions_new_format/ssm/dense/model.keras')
-build(dense_cp, 'basic', 'Dense Trained')
-
-conv_untrained = create_ssm_conv_model()
-build(conv_untrained, 'conv', 'Conv Untrained')
-
+#dense_untrained = create_ssm_dense_model()
+#build(dense_untrained, 'basic', 'Dense Untrained')
+#
+#dense_cp = load_model('model_versions_new_format/ssm/dense/model.keras')
+#build(dense_cp, 'basic', 'Dense Trained')
+#
+#conv_untrained = create_ssm_conv_model()
+#build(conv_untrained, 'conv', 'Conv Untrained')
+#
 conv_cp = load_model('model_versions_new_format/ssm/conv/model.keras')
-build(conv_cp, 'conv', 'Conv Trained')
-
-lstm_untrained = create_ssm_lstm_model()
-build(lstm_untrained, 'wide', 'LSTM Untrained')
-
+#build(conv_cp, 'conv', 'Conv Trained')
+#
+#lstm_untrained = create_ssm_lstm_model()
+#build(lstm_untrained, 'wide', 'LSTM Untrained')
+#
 lstm_cp = load_model('model_versions_new_format/ssm/lstm/model.keras')
-build(lstm_cp, 'wide', 'LSTM Trained')
+#build(lstm_cp, 'wide', 'LSTM Trained')
+#
+#residual_untrained = create_ssm_residual_model()
+#build(residual_untrained, 'wide', 'Residual Untrained')
+#
+residual_cp = load_model('model_versions_new_format/ssm/residual/model.keras')
+tf.keras.utils.plot_model(residual_cp, to_file="diagrams\ssm_res.png", show_shapes=True, show_layer_names=True, rankdir="TB",expand_nested=True)
 
-residual_untrained = create_ssm_residual_model()
-build(residual_untrained, 'wide', 'Residual Untrained')
-
-residual_cp = tf.keras.models.load_model('model_versions_new_format/ssm/residual/model.keras')
-build(residual_cp, 'wide', 'Residual Trained')
-
-performance = np.array(performance)
-data = pd.DataFrame(performance, columns=["Name", "Test #", "Loss", "Mean Absolute Error (MAE)", "Mean Absolute Percentange Error (MAPE) %"])
-print(data)
-data.to_csv('results/final/ssm_val_performance.csv', index=False)
+#build(residual_cp, 'wide', 'Residual Trained')
+#
+#performance = np.array(performance)
+#data = pd.DataFrame(performance, columns=["Name", "Test #", "Loss", "Mean Absolute Error (MAE)", "Mean Absolute Percentange Error (MAPE) %"])
+#print(data)
+#data.to_csv('results/final/ssm_val_performance.csv', index=False)

@@ -35,31 +35,40 @@ def build(model, name):
 #linear_trained.load_weights(linear_cp).expect_partial()
 #build(linear_trained, 'Linear Trained')
 
-dense_untrained = create_msm_dense_model()
-build(dense_untrained,'Dense Untrained')
-
+#dense_untrained = create_msm_dense_model()
+#build(dense_untrained,'Dense Untrained')
+#
 dense_cp = load_model('model_versions_new_format/msm/dense/model.keras', safe_mode=False)
-build(dense_cp, 'Dense Trained')
-
-conv_untrained = create_msm_conv_model()
-build(conv_untrained,'Conv Untrained')
-
+#build(dense_cp, 'Dense Trained')
+#
+#conv_untrained = create_msm_conv_model()
+#build(conv_untrained,'Conv Untrained')
+#
 conv_cp = load_model('model_versions_new_format/msm/conv/model.keras', safe_mode=False)
-build(conv_cp,'Conv Trained')
-
-lstm_untrained = create_msm_lstm_model()
-build(lstm_untrained,'LSTM Untrained')
-
+#build(conv_cp,'Conv Trained')
+#
+#lstm_untrained = create_msm_lstm_model()
+#build(lstm_untrained,'LSTM Untrained')
+#
 lstm_cp = load_model('model_versions_new_format/msm/lstm/model.keras', safe_mode=False)
-build(lstm_cp,'LSTM Trained')
-
-feedback_untrained = create_msm_feedback_model()
-build(feedback_untrained,'Feedback Untrained')
-
+#build(lstm_cp,'LSTM Trained')
+#
+#feedback_untrained = create_msm_feedback_model()
+#build(feedback_untrained,'Feedback Untrained')
+#
 feedback_cp = load_model('model_versions_new_format/msm/feedback/model.keras', safe_mode=False)
-build(feedback_cp, 'Feedback Trained')
+#build(feedback_cp, 'Feedback Trained')
+#
+print(dense_cp.summary())
+print(conv_cp.summary())
+print(lstm_cp.summary())
+print(feedback_cp.summary())
+#performance = np.array(performance)
+#data = pd.DataFrame(performance, columns=["Name", "Test #", "Loss", "Mean Absolute Error (MAE)", "Mean Absolute Percentange Error (MAPE) %"])
+#print(data)
+#data.to_csv('results/final/msm_val_performance.csv', index=False)
 
-performance = np.array(performance)
-data = pd.DataFrame(performance, columns=["Name", "Test #", "Loss", "Mean Absolute Error (MAE)", "Mean Absolute Percentange Error (MAPE) %"])
-print(data)
-data.to_csv('results/final/msm_val_performance.csv', index=False)
+tf.keras.utils.plot_model(dense_cp, to_file="diagrams\msm_dense.png", show_shapes=True, show_layer_names=True, rankdir="TB")
+tf.keras.utils.plot_model(conv_cp, to_file="diagrams\msm_conv.png", show_shapes=True, show_layer_names=True, rankdir="TB")
+tf.keras.utils.plot_model(lstm_cp, to_file="diagrams\msm_lstm.png", show_shapes=True, show_layer_names=True, rankdir="TB")
+tf.keras.utils.plot_model(feedback_cp, to_file="diagrams\msm_feedback.png", show_shapes=True, show_layer_names=True, rankdir="TB")
