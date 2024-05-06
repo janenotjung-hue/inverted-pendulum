@@ -47,13 +47,11 @@ model = load_model('my_model_test.h5')
 import shap
 
 explainer = shap.GradientExplainer(model, X_train)
-shap_values = explainer.shap_values(X_test)
+shap_values = explainer.shap_values(X_train)
 
 shap.initjs()
 
-print(X_test.shape)
+# specify class to explain
+cls = 0
 
-i = 0
-j = 0
-x_test_df = pd.DataFrame(data=X_test[i][j].reshape(1,32), columns = features)
-shap.force_plot(explainer.expected_value[0], shap_values[0][i][j], x_test_df)
+print(shap_values)
