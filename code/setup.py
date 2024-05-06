@@ -359,3 +359,14 @@ FeedBack.call = call
 def create_msm_feedback_model():
     model = FeedBack(units=32, out_steps=OUT_STEPS)
     return compile(model)
+
+
+def create_ssm_lstm_single_model(l1, l2, d1, d2, input_shape):
+   model = tf.keras.models.Sequential([
+    tf.keras.layers.LSTM(l1, input_shape=input_shape, return_sequences=True),
+    tf.keras.layers.LSTM(l2, return_sequences=True),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(d1),
+    tf.keras.layers.Dense(d2),
+    tf.keras.layers.Dense(1),])
+   return compile(model)
