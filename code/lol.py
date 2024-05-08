@@ -17,10 +17,9 @@ from keras.layers import Flatten
 from keras.optimizers import Adam
 
 
-def createModel(l1Nodes, l2Nodes, d1Nodes, d2Nodes, inputShape):
+def createModel(l1Nodes, d1Nodes, d2Nodes, inputShape):
     # input layer
     lstm1 = LSTM(l1Nodes, input_shape=inputShape, return_sequences=True)
-    lstm2 = LSTM(l2Nodes, return_sequences=True)
     flatten = Flatten()
     dense1 = Dense(d1Nodes)
     dense2 = Dense(d2Nodes)
@@ -28,7 +27,7 @@ def createModel(l1Nodes, l2Nodes, d1Nodes, d2Nodes, inputShape):
     # output layer
     outL = Dense(1, activation='relu')
     # combine the layers
-    layers = [lstm1, lstm2, flatten,  dense1, dense2, outL]
+    layers = [lstm1, flatten,  dense1, dense2, outL]
     # create the model
     model = Sequential(layers)
     opt = Adam(learning_rate=0.005)
@@ -73,20 +72,21 @@ X_test, y_test = convert_to_array(window.test)
 y_train = np.squeeze(y_train)
 y_test = np.squeeze(y_test)
 
-model = createModel(32, 32, 8, 8, (X_train.shape[1], X_train.shape[2]))
+model = createModel(32, 8, 8, (X_train.shape[1], X_train.shape[2]))
 
-model.fit(X_train, y_train, epochs=20, verbose=2)
-model.save('my_model_test.h5')
+#model.fit(X_train, y_train, epochs=20, verbose=2)
+#model.save('my_model_test.h5')
 
-#model = load_model('my_model_test.h5')
-#print(model.summary())
+model = load_model('my_model_test.h5')
+print(model.summary())
 
 import shap
 
 explainer = shap.DeepExplainer(model, X_train)
 
 print(explainer.expected_value[0])
-shap_values = explainer.shap_values(X_test)
+
+shap_values = explainer.shap_values(X_train)
 len(shap_values)
 
 shap.initjs()
