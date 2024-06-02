@@ -27,7 +27,7 @@ def get_datasets(dropCol):
         X = data_df
         y = pd.Series(data=label_df, name="direction")
         
-        X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.90)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.90, shuffle=False)
         X_trains.append(X_train)
         X_tests.append(X_test)
         y_trains.append(y_train)
