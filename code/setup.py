@@ -49,8 +49,11 @@ def get_datasets(dropCol):
 """
 def get_results(predictions: np.array, actual: np.array):
     predictions_nominal = [ 0 if x < 0.5 else 1 for x in predictions]
+    if np.array_equal(predictions, actual):
+        return [], 1, 1, 1
     cm = confusion_matrix(actual, predictions_nominal)
     #print(cm)
+    
     #print("Accuracy: ", round(np.sum(np.diagonal(cm))/np.sum(cm),3))
     #print("Sensitivity: ", round(cm[1,1]/np.sum(cm[1,:]),3))
     #print("Specificity: ", round(cm[0,0]/np.sum(cm[0,:]),3))
