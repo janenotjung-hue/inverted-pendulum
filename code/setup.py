@@ -11,7 +11,7 @@ def get_datasets(dropCol):
     for i in range(len(file_array)):
         df = pd.read_csv("../training_sets_nudge/"+file_array[i])
         df = df.drop(columns=["time"])
-        if(dropCol != None): df = df.drop(columns=[dropCol])
+        
         n = len(df)
         label_df = []
         data_df = df.iloc[:-1]
@@ -24,6 +24,7 @@ def get_datasets(dropCol):
             else:
                 label_df.insert(i, 0) #left
 
+        if(dropCol != None): data_df = data_df.drop(columns=dropCol)
         X = data_df
         y = pd.Series(data=label_df, name="direction")
         
