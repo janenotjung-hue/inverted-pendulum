@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
-model = tf.keras.models.load_model('model_versions_new_format/ssm/dense/model.keras')
+model = tf.keras.models.load_model('trained_models/ssm/dense/model.keras')
 
 def format_to_array(data, range): 
    df = pd.DataFrame(data, columns=['time', 'theta', 'thetadot', 'x', 'xdot'])

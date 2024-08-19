@@ -1,9 +1,0 @@
-workflow
-    training
-    validation on holdout set generated from training dataset
-    evaluation on the test dataset
-
-fit() = training model by slicing data into batch_size and repeatedly iterating over entire dataset for given number of epochs
-history = holds record of loss values and metric values during training (loss, sparse_categorial_accuracy, validation_loss, validation_sparse_categorial_accuracy)
-evaluate() = evaluate model on test data (returns loss, sca)
-compile() = needed to train a model w fit(), specifies loss function, optimizer and metrics to observe
