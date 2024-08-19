@@ -6,7 +6,7 @@ import pandas as pd
 import tensorflow as tf
 from setup import WindowGenerator, fit_checkpoints, create_ssm_dense_model, create_ssm_conv_model, create_ssm_lstm_model, create_ssm_residual_model
 
-file_array = os.listdir('training_sets_nudge')
+file_array = os.listdir('training_data')
 def build(model, window, path_name):
     input_width = 1
     label_width = 1
@@ -19,7 +19,7 @@ def build(model, window, path_name):
             input_width = 10
     for i in range(len(file_array)):
         print(f'Run {i+1}')
-        df = pd.read_csv("training_sets_nudge/"+file_array[i])
+        df = pd.read_csv("training_data/"+file_array[i])
 
         time = df.pop('time')
 
@@ -36,13 +36,13 @@ def build(model, window, path_name):
     return history
 
 dense = create_ssm_dense_model()
-build(dense, 'basic', 'model_versions_nudging/ssm/dense')
+build(dense, 'basic', 'trained_models/ssm/dense')
 #
 conv = create_ssm_conv_model()
-build(conv, 'conv', 'model_versions_nudging/ssm/conv')
+build(conv, 'conv', 'trained_models/ssm/conv')
 #
 lstm = create_ssm_lstm_model()
-build(lstm, 'wide', 'model_versions_nudging/ssm/lstm')
+build(lstm, 'wide', 'trained_models/ssm/lstm')
 
 residual = create_ssm_residual_model()
-build(residual, 'wide', 'model_versions_nudging/ssm/residual')
+build(residual, 'wide', 'trained_models/ssm/residual')

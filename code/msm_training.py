@@ -7,11 +7,11 @@ import tensorflow as tf
 from setup import WindowGenerator, fit_checkpoints, create_msm_linear_model, create_msm_dense_model, create_msm_conv_model, create_msm_lstm_model, create_msm_feedback_model
 
 OUT_STEPS = 200
-file_array = os.listdir('training_sets_nudge')
+file_array = os.listdir('training_data')
 def build(model, path_name):
     for i in range(len(file_array)):
         print(f'Run {i+1}')
-        df = pd.read_csv("training_sets_nudge/"+file_array[i])
+        df = pd.read_csv("training_data/"+file_array[i])
 
         time = pd.to_numeric(df.pop('time'))
 
@@ -29,13 +29,13 @@ def build(model, path_name):
     return history
 
 dense = create_msm_dense_model()
-history = build(dense, 'model_versions_nudging/msm/dense')
+history = build(dense, 'trained_models/msm/dense')
 
 conv = create_msm_conv_model()
-build(conv, 'model_versions_nudging/msm/conv')
+build(conv, 'trained_models/msm/conv')
 
 lstm = create_msm_lstm_model()
-build(lstm, 'model_versions_nudging/msm/lstm')
+build(lstm, 'trained_models/msm/lstm')
 
 feedback = create_msm_feedback_model()
-build(feedback, 'model_versions_nudging/msm/feedback')
+build(feedback, 'trained_models/msm/feedback')

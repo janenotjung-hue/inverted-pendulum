@@ -8,12 +8,12 @@ from setup import WindowGenerator, fit_checkpoints, create_msm_linear_model, cre
 from keras.models import load_model
 
 OUT_STEPS = 200
-file_array = os.listdir('training_sets_nudge')
+file_array = os.listdir('training_data')
 performance = []
 def build(model, name):
    for i in range(len(file_array)):
       print(f'Run {i+1}')
-      df = pd.read_csv("training_sets_nudge/"+file_array[i])
+      df = pd.read_csv("training_data/"+file_array[i])
 
       time = pd.to_numeric(df.pop('time'))
 
@@ -30,25 +30,25 @@ def build(model, name):
 dense_untrained = create_msm_dense_model()
 build(dense_untrained,'Dense Untrained')
 
-dense_cp = load_model('model_versions_nudging/msm/dense/model.keras')
+dense_cp = load_model('trained_models/msm/dense/model.keras')
 build(dense_cp, 'Dense Trained')
 
 conv_untrained = create_msm_conv_model()
 build(conv_untrained,'Conv Untrained')
 
-conv_cp = load_model('model_versions_nudging/msm/conv/model.keras')
+conv_cp = load_model('trained_models/msm/conv/model.keras')
 build(conv_cp,'Conv Trained')
 
 lstm_untrained = create_msm_lstm_model()
 build(lstm_untrained,'LSTM Untrained')
 
-lstm_cp = load_model('model_versions_nudging/msm/lstm/model.keras')
+lstm_cp = load_model('trained_models/msm/lstm/model.keras')
 build(lstm_cp,'LSTM Trained')
 
 feedback_untrained = create_msm_feedback_model()
 build(feedback_untrained,'Feedback Untrained')
 
-feedback_cp = load_model('model_versions_nudging/msm/feedback/model.keras')
+feedback_cp = load_model('trained_models/msm/feedback/model.keras')
 build(feedback_cp, 'Feedback Trained')
 
 performance = np.array(performance)
